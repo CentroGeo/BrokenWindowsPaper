@@ -1,0 +1,6 @@
+---
+title: "Discussion"
+format: html
+---
+
+SObre replicabilidad

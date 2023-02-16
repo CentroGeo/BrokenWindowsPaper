@@ -1,0 +1,8 @@
+---
+title: "Data Acquisition and Preprocessing"
+format: html
+---
+
+# Adquisition 
+
+# Preprocessing
