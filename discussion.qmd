@@ -4,3 +4,4 @@ format: html
 ---
 
 SObre replicabilidad del paper de ventanas rotas
+las cosas no salen bien 
