@@ -5,3 +5,9 @@ format: html
 
 SObre replicabilidad del paper de ventanas rotas
 las cosas no salen bien 
+
+#### Un code aca 
+
+
+Sobre replicabilidad del paper de ventanas rotas
+Aqui va a ir el codigo explicado para replicar el articulo
