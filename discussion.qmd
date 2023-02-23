@@ -3,4 +3,4 @@ title: "Discussion"
 format: html
 ---
 
-SObre replicabilidad
+SObre replicabilidad del paper de ventanas rotas
