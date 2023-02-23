@@ -3,4 +3,5 @@ title: "Discussion"
 format: html
 ---
 
-SObre replicabilidad del paper de ventanas rotas
+Sobre replicabilidad del paper de ventanas rotas
+Aqui va a ir el codigo explicado para replicar el articulo
