@@ -124,6 +124,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 }</script>
 
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -200,6 +201,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#preprocessing-1" id="toc-preprocessing-1" class="nav-link" data-scroll-target="#preprocessing-1"><span class="toc-section-number">5</span>  Preprocessing</a>
   <ul class="collapse">
   <li><a href="#índice-de-concentración-de-desventajas" id="toc-índice-de-concentración-de-desventajas" class="nav-link" data-scroll-target="#índice-de-concentración-de-desventajas"><span class="toc-section-number">5.1</span>  Índice de concentración de desventajas</a></li>
+  <li><a href="#análisis-de-componentes-principales-pca" id="toc-análisis-de-componentes-principales-pca" class="nav-link" data-scroll-target="#análisis-de-componentes-principales-pca"><span class="toc-section-number">5.2</span>  Análisis de Componentes Principales (PCA)</a>
+  <ul class="collapse">
+  <li><a href="#nivel-colonias" id="toc-nivel-colonias" class="nav-link" data-scroll-target="#nivel-colonias"><span class="toc-section-number">5.2.1</span>  NIVEL COLONIAS</a></li>
+  <li><a href="#nivel-alcalidas" id="toc-nivel-alcalidas" class="nav-link" data-scroll-target="#nivel-alcalidas"><span class="toc-section-number">5.2.2</span>  NIVEL ALCALIDAS</a></li>
+  </ul></li>
   </ul></li>
   </ul>
 </nav>
@@ -306,8 +312,440 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>CENSO_2020.head(<span class="dv">2</span>)                          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+<blockquote class="blockquote">
+<p>De la base de datos filtramos eliminando las filas que contienen los totales</p>
+</blockquote>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>Values <span class="op">=</span> [<span class="st">'Total de la entidad'</span>,<span class="st">'Total del municipio'</span>,</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>         <span class="st">'Total de la localidad urbana'</span>, <span class="st">'Total AGEB urbana'</span>]</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE <span class="op">=</span> CENSO_2020.query(<span class="st">"NOM_LOC != @Values"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Dentro de la base de datos existe la presencia de filas donde los valores son simbolos o caracteres especiales(*, N/D, 99999, etc), por lo que es necesario remplazarlos por valores NAN.</p>
+</blockquote>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE <span class="op">=</span> CENSO_2020_USE.replace({<span class="st">'999999999'</span>: np.nan, </span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">'99999999'</span>: np.nan,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">'*'</span>: np.nan,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">'N/D'</span>: np.nan})</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>                  </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>DIM_NUM <span class="op">=</span> CENSO_2020_USE.iloc[: , <span class="op">-</span><span class="dv">6</span>:].columns.tolist()</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>DIM_TEXT <span class="op">=</span> CENSO_2020_USE.iloc[:, :<span class="dv">8</span>].columns.tolist()</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[DIM_NUM] <span class="op">=</span> CENSO_2020_USE[DIM_NUM].astype(<span class="st">'float'</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[DIM_TEXT] <span class="op">=</span> CENSO_2020_USE[DIM_TEXT].astype(<span class="bu">str</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>De igual manera la información referida a a las columnas de “Entidad, Municipio, Localidad, AGEB y Manzana”, no presetan el formato necesario para crear la columna CVEGEO, por lo que debemos completar la información de la forma correcta.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Creada la columna CVEGEO, calculamos la dimensión población masculina de 15 a 24 años como la suma de “P_15A17_M y P_18A24_M”. Una vez que hemos creado la dimensión se hacen poco necesarias “P_15A17_M y P_18A24_M, por lo que se eliminan.</p>
+</blockquote>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Corrección de información</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'ENTIDAD'</span>] <span class="op">=</span> CENSO_2020_USE[<span class="st">'ENTIDAD'</span>].<span class="bu">str</span>.zfill(<span class="dv">2</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'MUN'</span>] <span class="op">=</span> CENSO_2020_USE[<span class="st">'MUN'</span>].<span class="bu">str</span>.zfill(<span class="dv">3</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'LOC'</span>] <span class="op">=</span> CENSO_2020_USE[<span class="st">'LOC'</span>].<span class="bu">str</span>.zfill(<span class="dv">4</span>)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'AGEB'</span>] <span class="op">=</span> CENSO_2020_USE[<span class="st">'AGEB'</span>].<span class="bu">str</span>.zfill(<span class="dv">4</span>)  </span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'MZA'</span>] <span class="op">=</span> CENSO_2020_USE[<span class="st">'MZA'</span>].<span class="bu">str</span>.zfill(<span class="dv">3</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'CVEGEO'</span>] <span class="op">=</span> CENSO_2020_USE[[<span class="st">'ENTIDAD'</span>, <span class="st">'MUN'</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                                           <span class="st">'LOC'</span>,<span class="st">'AGEB'</span>,<span class="st">'MZA'</span>]].agg(<span class="st">''</span>.join, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">## Cálculo de Población masculina de 15 a 24 años</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE[<span class="st">'P_15A24_M'</span>] <span class="op">=</span> CENSO_2020_USE[[<span class="st">"P_15A17_M"</span>, </span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>                                              <span class="st">"P_18A24_M"</span>]].<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>, </span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                                                                min_count<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">## Eliminación de dimensiones</span></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE <span class="op">=</span> CENSO_2020_USE.drop([<span class="st">'P_15A17_M'</span>,<span class="st">'P_18A24_M'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>CENSO_2020_USE.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se carga la base de datos geoespacial que corresponde a la unidad geografica de “manzanas”. Para este caso, el archivo se encuentra en formato “json”. Del archivo, unicamente consideramos las columnas “CVEGEO y geometry”</p>
+</blockquote>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Se carga el archivo espacial de Manzanas</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>MANZA_CDMX <span class="op">=</span> gpd.read_file(Entradas <span class="op">+</span><span class="st">'MANZA_CDMX.json'</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>MANZA_CDMX <span class="op">=</span> MANZA_CDMX[[<span class="st">'CVEGEO'</span>,<span class="st">'geometry'</span>]]</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>MANZA_CDMX.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Union (merge) de las unidades geoespaciales con la información del Censo de Población y vivienda 2020. En este punto a cada unidad geografica le asignamos la información del censo de población.</p>
+</blockquote>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Union a la izquierda con campo llave primaria "CVEGEO"</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>MERGE <span class="op">=</span> MANZA_CDMX.merge( CENSO_2020_USE,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>                          left_on <span class="op">=</span> <span class="st">'CVEGEO'</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>                          right_on <span class="op">=</span> <span class="st">'CVEGEO'</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>                          how <span class="op">=</span> <span class="st">'inner'</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>MERGE.head(<span class="dv">2</span>)          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Siempre es importante saber en que sistema de proyección se encuentran nuestros datos, para eso usamos “crs”</p>
+</blockquote>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>MERGE.crs</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Hacemos un mapa por que nos gustan los mapitas.</p>
+</blockquote>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> MERGE.plot(ax <span class="op">=</span> ax, column<span class="op">=</span><span class="st">'P_15A24_M'</span>,</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>                legend<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>                alpha<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>                scheme<span class="op">=</span><span class="st">'NaturalBreaks'</span>,</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>                cmap<span class="op">=</span><span class="st">'copper'</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>                classification_kwds<span class="op">=</span>{<span class="st">'k'</span>:<span class="dv">6</span>})</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Población Masculina 15 a 24 años, Ciudad de México'</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Hasta el punto anterior tenemos la información contenida dentro de las manzanas, el paso que sigue es llevar las manzanas a colonias. Para esto es necesario entender que ambos elementos son poligonales y que los centroides de manzanas no necesariamente refieren a la solución contenida dentro de un poligono mayor.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Por eso es necesario usar el criterio de maxima área de la sobreposición de poligonos. Al hablar de área el sistema de proyección debe estar en metros, por lo que si no lo esta se debe cambiar. Para este caso se cambio a <a href="https://epsg.io/6362">EPSG:6362</a></p>
+</blockquote>
+<blockquote class="blockquote">
+<p>Se cargan las colonias y se valida que ambos crs se encuentren en metros “6362 o 6362” , en caso contrario es necesrio llevar a cabo una reproyección.</p>
+</blockquote>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>COLONIAS_CDMX <span class="op">=</span> gpd.read_file(Entradas <span class="op">+</span><span class="st">'COLONIAS.json'</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Colonias CRS"</span>, COLONIAS_CDMX.crs)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Manzanas CRS"</span>, MERGE.crs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Los archivos estan en coordenadas geograficas, por lo que se reproyecta</p>
+</blockquote>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>MANZANA_METROS <span class="op">=</span> MERGE.to_crs(<span class="dv">6362</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>COLONIAS_METROS <span class="op">=</span> COLONIAS_CDMX.to_crs(<span class="dv">6362</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Crs Manzanas"</span>, MANZANA_METROS.crs )</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Crs Colonias"</span>, COLONIAS_METROS.crs )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Buscamos en este punto identificar la intersección entre colonias y manzanas para asignar a cada manzana (base al criterio de área maxima) la clave de la colonia a la que pertence.</p>
+</blockquote>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>INTERSECCION <span class="op">=</span> gpd.overlay(COLONIAS_METROS,</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>                           MANZANA_METROS,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>                            how <span class="op">=</span> <span class="st">'intersection'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se calcula el valor de área para cada poligono intersectado</p>
+</blockquote>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>INTERSECCION[<span class="st">'area'</span>] <span class="op">=</span> INTERSECCION.geometry.area</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Para el overlay se reordena la información del área de manera descendente y se eliminan los duplicados con base a la “CVEGEO” manteniendo unicamente el primer valor</p>
+</blockquote>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>INTERSECCION <span class="op">=</span> (INTERSECCION.sort_values(<span class="st">'area'</span>, ascending <span class="op">=</span> <span class="va">False</span>).</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>                drop_duplicates(subset<span class="op">=</span><span class="st">"CVEGEO"</span>, keep <span class="op">=</span> <span class="st">'first'</span>).</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>                drop([<span class="st">'geometry'</span>,<span class="st">'area'</span>], axis <span class="op">=</span> <span class="dv">1</span>))</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">### Se eliminan columnas no necesarias</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>INTERSECCION_USE <span class="op">=</span> INTERSECCION.drop([<span class="st">'ENT'</span>, <span class="st">'CVEDT'</span>, <span class="st">'NOMDT'</span>, <span class="st">'DTTOLOC'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>En la base de colonias se identificaron caracteres especiales, por lo que se procede a remplazarlos, por su valor correspondiente.</p>
+</blockquote>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>Dic_Ca <span class="op">=</span> {<span class="st">'Ã‘'</span>: <span class="st">'Ñ'</span>}</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>INTERSECCION_USE.replace(Dic_Ca, inplace<span class="op">=</span><span class="va">True</span>, regex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>INTERSECCION_USE.columns <span class="op">=</span> INTERSECCION_USE.columns.to_series().replace(Dic_Ca, regex<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>INTERSECCION_USE.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se une la información de overly de las Manzanas ya alineadas con colonias en la geometry de las manzanas para tener la base final. En la base final podemos observar la información a nivel: manzana, colonia y alcaldia, donde esta ultima se extraer en razon directa de la informacion contenida en la base de manzanas.</p>
+</blockquote>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>DATA_FINAL_USE <span class="op">=</span> MANZA_CDMX.merge(INTERSECCION_USE,</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                          left_on <span class="op">=</span> <span class="st">'CVEGEO'</span>,</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                          right_on <span class="op">=</span> <span class="st">'CVEGEO'</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                          how <span class="op">=</span> <span class="st">'inner'</span>).rename({<span class="st">"CVEUT"</span>: <span class="st">"CVE_COL"</span>, <span class="st">"NOMUT"</span>: <span class="st">"NOM_COL"</span>, <span class="st">"ID"</span>: <span class="st">"ID_COL"</span>}, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>DATA_FINAL_USE.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se valida que cada manzana este asociada a cada una de las colonias<br>
+Recorndado que la relación es una colonia a muchas manzanzanas<br>
+“” Por lo que no deben existir manzanas repetididas”</p>
+</blockquote>
+<p><span class="math display">\[M_{n-1} = f(C)\]</span> <span class="math display">\[ C \gets M_{n-1}\]</span></p>
+<blockquote class="blockquote">
+<p>Se valida que no existan manzanas repetidas</p>
+</blockquote>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>DATA_FINAL_USE.CVEGEO.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>La relacion de muchas manzanas a una colonia, se valida para cada clave de colonias se repite tantas veces existan manzanas</p>
+</blockquote>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>DATA_FINAL_USE.CVE_COL.value_counts()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Aqui validamos como las claves de las manzanas son diferentes para una misma colonia y se entiende la relacion, muchas manzanas a una colonia</p>
+</blockquote>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>DATA_FINAL_USE.query(<span class="st">'CVE_COL == "07-320"'</span>).head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Reordenamos la información de la forma “Regional a local” es decir:</p>
+</blockquote>
+<p><span class="math display">\[ Alcaldia \to Colonia \to Manzana \]</span></p>
+<ol type="1">
+<li><strong>Alcaldia</strong>: <em>ENTIDAD, NOM_ENT, MUN, NOM_MUN, LOC, NOM_LOC,</em><br>
+</li>
+<li><strong>Colonia</strong>: <em>ID_COL, CVE_COL, NOM_COL,</em></li>
+<li><strong>Manzana</strong>: <em>AGEB, MZA, CVEGEO,</em></li>
+<li><strong>Dimensiones</strong>: <em>POBTOT, PSINDER, PROM_OCUP, P3YM_HLI, P_15A24_M</em></li>
+<li><strong>Geometry</strong></li>
+</ol>
+<blockquote class="blockquote">
+<p>Reordenamiento de la información</p>
+</blockquote>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>DATA_FIN_USE <span class="op">=</span> DATA_FINAL_USE[[<span class="st">'ENTIDAD'</span>,<span class="st">'NOM_ENT'</span>, <span class="st">'MUN'</span>, <span class="st">'NOM_MUN'</span>, <span class="st">'LOC'</span>, <span class="st">'NOM_LOC'</span>,</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'ID_COL'</span>,<span class="st">'CVE_COL'</span>, <span class="st">'NOM_COL'</span>, <span class="st">'AGEB'</span>, <span class="st">'MZA'</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'POBTOT'</span>, <span class="st">'PSINDER'</span>, <span class="st">'PROM_OCUP'</span>, <span class="st">'P3YM_HLI'</span>, <span class="st">'P_15A24_M'</span>,</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>                               <span class="st">'geometry'</span>]]</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>DATA_FIN_USE.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Hacemos un mapita porque nos gustan los mapitas</p>
+</blockquote>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> DATA_FIN_USE.plot(ax <span class="op">=</span> ax, column<span class="op">=</span><span class="st">'P_15A24_M'</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>                       legend<span class="op">=</span> <span class="va">False</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>                       alpha<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>                       scheme<span class="op">=</span><span class="st">'NaturalBreaks'</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>                       cmap<span class="op">=</span><span class="st">'copper'</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>                       classification_kwds<span class="op">=</span>{<span class="st">'k'</span>:<span class="dv">6</span>})</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Población Masculina 15 a 24 años, Ciudad de México'</span>)</span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="análisis-de-componentes-principales-pca" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="análisis-de-componentes-principales-pca"><span class="header-section-number">5.2</span> Análisis de Componentes Principales (PCA)</h2>
+<blockquote class="blockquote">
+<p>En esta sección se cálcula el indice de <strong><em>Concetración de desventajas</em></strong> mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel <strong>Alcaldias y Delegaciones</strong>. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.</p>
+</blockquote>
+<section id="nivel-colonias" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="nivel-colonias"><span class="header-section-number">5.2.1</span> NIVEL COLONIAS</h3>
+<blockquote class="blockquote">
+<p>Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por “PCA”</p>
+</blockquote>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>COLONIA_PCA <span class="op">=</span> pd.DataFrame(DATA_FIN_USE.groupby([<span class="st">'CVE_COL'</span>]).agg({<span class="st">'POBTOT'</span>: <span class="st">'sum'</span>, </span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'PSINDER'</span>:<span class="st">'sum'</span>,</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'PROM_OCUP'</span>: <span class="st">'mean'</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'P3YM_HLI'</span>:<span class="st">'sum'</span>,</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'P_15A24_M'</span>: <span class="st">'sum'</span>}).reset_index())</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>COLONIA_PCA.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout-important callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Impotante
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Para que componentes principales tenga un alto rendimiento la información sdebe estar normalizada por <strong>Z-SCORE (StandardScaler)</strong></p>
+<p><span class="math display">\[ Z = \frac{x - \mu}{\sigma} \]</span></p>
+</div>
+</div>
+<blockquote class="blockquote">
+<p>Para calcular la componente principal, separamos nuestra base de datos con el fin de tener las dimensiones que contruyen el índice.</p>
+</blockquote>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Hacemos un copia por si necesitamos un proceso con la base original</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>PCA_COLONIAS <span class="op">=</span> COLONIA_PCA.copy()</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="co">### Seleccion de las dimensiones con las que se calcula el indice de desventajas "PSINDER; PROM_OCUP; P3YM_HLI; P_15A24_M"</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>PCA_X <span class="op">=</span> PCA_COLONIAS.drop([<span class="st">'CVE_COL'</span>,<span class="st">'POBTOT'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>PCA_y <span class="op">=</span> PCA_COLONIAS[[<span class="st">'CVE_COL'</span>]]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se normaliza la informacion por Z-Score, determinamos el número de componentes y aplicamos la función para calcular</p>
+</blockquote>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Se normaliza la informacion por Z-Score</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>S_TRANSF <span class="op">=</span> StandardScaler()</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>PCA_X_SCALER <span class="op">=</span> pd.DataFrame(S_TRANSF.fit_transform(PCA_X), </span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>                            columns <span class="op">=</span> PCA_X.columns)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a><span class="co">### Se determina el número de componentes</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>PCA_N <span class="op">=</span> PCA(n_components <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>PCA_COMPONENTE <span class="op">=</span> PCA_N.fit_transform(PCA_X_SCALER)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Se calcula la varianza total por respecto al numero de componentes</p>
+</blockquote>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Se calcula la varianza total por respecto al numero de componentes</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>VARIANZA_TOTA <span class="op">=</span> PCA_N.explained_variance_ratio_.<span class="bu">sum</span>() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st"> Total de la variancia explicada </span><span class="ch">\n</span><span class="st">"</span>, <span class="bu">round</span>(VARIANZA_TOTA,<span class="dv">3</span>), <span class="st">"%"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Con una componente (PC1) se explica 66.82 % de la varianza total, lo cual implica que mas de la mitad de la información e los datos puede encapsularse en ese componente principal.</p>
+</blockquote>
+<blockquote class="blockquote">
+<p>finalmente se indexan los resultados a la base de datos como una nueva columna con clave DIS_COL = concentrated disadvantage component</p>
+</blockquote>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Pegamos los valores de PCA en la base de datos</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>PCA_COLONIAS[<span class="st">'DIS_COL'</span>] <span class="op">=</span> PCA_COMPONENTE</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>PCA_COLONIAS.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="callout-important callout callout-style-default no-icon callout-captioned">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon no-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Impotante
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>Lo anterior lo transformamos a una funcion para optimizar el proceso de trabajo. Funcion que podemos llamar despues</p>
+</div>
+</div>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> CONC_DIS (TABLA, DIM_CLAVE, DIM_POBLA):</span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    PCA_TABLA <span class="op">=</span> TABLA.copy()</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">### Seleccion de las dimensiones con las que se calcula el indice de desventajas "PSINDER; PROM_OCUP; P3YM_HLI; P_15A24_M"</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>     </span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    PCA_X <span class="op">=</span> PCA_TABLA.drop([DIM_CLAVE, DIM_POBLA], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    PCA_y <span class="op">=</span> PCA_TABLA[[DIM_CLAVE]]</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">### Se normaliza la informacion por Z-Score</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>    S_TRANSF <span class="op">=</span> StandardScaler()</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>    PCA_X_SCALER <span class="op">=</span> pd.DataFrame( S_TRANSF.fit_transform(PCA_X), </span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a>                                 columns <span class="op">=</span> PCA_X.columns)</span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a>                                 </span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">### Se determina el número de componentes</span></span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a>    PCA_N <span class="op">=</span> PCA(n_components <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>    PCA_COMPONENTE <span class="op">=</span> PCA_N.fit_transform(PCA_X_SCALER)</span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">### Se calcula la varianza total por respecto al numero de componentes</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>     </span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>    VARIANZA_TOTA <span class="op">=</span> PCA_N.explained_variance_ratio_.<span class="bu">sum</span>() <span class="op">*</span> <span class="dv">100</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st"> Total de la variancia explicada </span><span class="ch">\n</span><span class="st">"</span>, <span class="bu">round</span>(VARIANZA_TOTA,<span class="dv">3</span>), <span class="st">"%"</span>)</span>
+<span id="cb27-26"><a href="#cb27-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">### Se indexan los resultados a la base de datos como una nueva columna con clave DIS_COL = concentrated disadvantage component </span></span>
+<span id="cb27-27"><a href="#cb27-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb27-28"><a href="#cb27-28" aria-hidden="true" tabindex="-1"></a>    PCA_TABLA[<span class="st">'DISAD'</span>] <span class="op">=</span> PCA_COMPONENTE</span>
+<span id="cb27-29"><a href="#cb27-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-30"><a href="#cb27-30" aria-hidden="true" tabindex="-1"></a>    PCA_TABLA <span class="op">=</span> PCA_TABLA[[DIM_CLAVE, <span class="st">'DISAD'</span> ]]</span>
+<span id="cb27-31"><a href="#cb27-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-32"><a href="#cb27-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> (PCA_TABLA)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Podemos usar la función creada y aplicarla en los datos para revalidar los resultados.</p>
+</blockquote>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Revalidación de información</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>DESVE_COL <span class="op">=</span> CONC_DIS (COLONIA_PCA, <span class="st">'CVE_COL'</span>,<span class="st">'POBTOT'</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>DESVE_COL.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="nivel-alcalidas" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="nivel-alcalidas"><span class="header-section-number">5.2.2</span> NIVEL ALCALIDAS</h3>
+<blockquote class="blockquote">
+<p>El Agrupamiento de datos por nivel Alcaldia para “PCA”. Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()</p>
+</blockquote>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>ALCALDIA_PCA <span class="op">=</span> pd.DataFrame(DATA_FIN_USE.groupby([<span class="st">'MUN'</span>]).agg({<span class="st">'POBTOT'</span>: <span class="st">'sum'</span>, </span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'PSINDER'</span>:<span class="st">'sum'</span>,</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'PROM_OCUP'</span>: <span class="st">'mean'</span>,</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'P3YM_HLI'</span>:<span class="st">'sum'</span>,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>                                                                  <span class="st">'P_15A24_M'</span>: <span class="st">'sum'</span>}).reset_index())</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>ALCALDIA_PCA.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Aplicamos la funcion creada con anterioridad</p>
+</blockquote>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Aplicando la función creada arriba</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>DESVE_ALCA <span class="op">=</span> CONC_DIS (ALCALDIA_PCA, <span class="st">'MUN'</span>,<span class="st">'POBTOT'</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>DESVE_ALCA.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>En este punto, podemos unir toda la información a la tabla original y renombramos las columnas de desventajas en cada nivel</p>
+</blockquote>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>MERGE_DESVENTAJAS <span class="op">=</span> DATA_FIN_USE.merge(DESVE_COL, </span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>                                       left_on <span class="op">=</span> <span class="st">'CVE_COL'</span>, </span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>                                       right_on <span class="op">=</span> <span class="st">'CVE_COL'</span>, </span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>                                       how <span class="op">=</span> <span class="st">'inner'</span>).merge(DESVE_ALCA, </span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>                                                            left_on <span class="op">=</span><span class="st">'MUN'</span>, </span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>                                                            right_on <span class="op">=</span> <span class="st">'MUN'</span> , </span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>                                                            how <span class="op">=</span> <span class="st">'inner'</span>).rename({<span class="st">"DISAD_x"</span>: <span class="st">"DIS_COL"</span>, <span class="st">"DISAD_y"</span>: <span class="st">"DIS_MUN"</span>}, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>MERGE_DESVENTAJAS.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<blockquote class="blockquote">
+<p>Hacemos un mapita nuevamente</p>
+</blockquote>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> MERGE_DESVENTAJAS.plot(ax <span class="op">=</span> ax, column<span class="op">=</span><span class="st">'DIS_COL'</span>,</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>                            legend<span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>                            alpha<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>                            scheme<span class="op">=</span><span class="st">'NaturalBreaks'</span>,</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>                            cmap<span class="op">=</span><span class="st">'copper'</span>,</span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>                            classification_kwds<span class="op">=</span>{<span class="st">'k'</span>:<span class="dv">6</span>})</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Desventajas a nivel Colonia, Ciudad de México'</span>)</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-12"><a href="#cb32-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">8</span>))</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> MERGE_DESVENTAJAS.plot(ax <span class="op">=</span> ax, column<span class="op">=</span><span class="st">'DIS_MUN'</span>,</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>                            legend<span class="op">=</span> <span class="va">True</span>,</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>                            alpha<span class="op">=</span><span class="fl">0.8</span>,</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>                            scheme<span class="op">=</span><span class="st">'NaturalBreaks'</span>,</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>                            cmap<span class="op">=</span><span class="st">'copper'</span>,</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>                            classification_kwds<span class="op">=</span>{<span class="st">'k'</span>:<span class="dv">6</span>})</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Desventajas a nivel Alcaldias, Ciudad de México'</span>)</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>ax.set_axis_off()</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
+</section>
 </section>
 </section>
 

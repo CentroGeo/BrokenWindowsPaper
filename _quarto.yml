@@ -19,6 +19,7 @@ bibliography: references.bib
 format:
   html:
     theme: cosmo
+    fontsize: 0.95em
   pdf:
     documentclass: scrreprt
 

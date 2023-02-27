@@ -349,3 +349,209 @@ plt.show()
 ```
 
 ## Análisis de Componentes Principales (PCA)
+
+>En esta sección se cálcula el indice de **_Concetración de desventajas_** mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel **Alcaldias y Delegaciones**. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.
+
+### NIVEL COLONIAS
+
+> Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por "PCA"
+
+```{python}
+#| eval: false
+COLONIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['CVE_COL']).agg({'POBTOT': 'sum', 
+                                                                  'PSINDER':'sum',
+                                                                  'PROM_OCUP': 'mean',
+                                                                  'P3YM_HLI':'sum',
+                                                                  'P_15A24_M': 'sum'}).reset_index())
+COLONIA_PCA.head(2)
+```
+
+
+::: {.callout-important icon=false}
+## Impotante
+Para que componentes principales tenga un alto rendimiento la información sdebe estar normalizada por **Z-SCORE (StandardScaler)**
+
+$$ Z = \frac{x - \mu}{\sigma} $$
+:::
+
+> Para calcular la componente principal, separamos nuestra base de datos con el fin de tener las dimensiones que contruyen el índice.
+
+```{python}
+#| eval: false
+
+### Hacemos un copia por si necesitamos un proceso con la base original
+PCA_COLONIAS = COLONIA_PCA.copy()
+
+### Seleccion de las dimensiones con las que se calcula el indice de desventajas "PSINDER; PROM_OCUP; P3YM_HLI; P_15A24_M"
+
+PCA_X = PCA_COLONIAS.drop(['CVE_COL','POBTOT'], axis = 1)
+PCA_y = PCA_COLONIAS[['CVE_COL']]
+```
+
+
+> Se normaliza la informacion por Z-Score, determinamos el número de componentes y aplicamos la función para calcular
+
+```{python}
+#| eval: false
+### Se normaliza la informacion por Z-Score
+
+S_TRANSF = StandardScaler()
+PCA_X_SCALER = pd.DataFrame(S_TRANSF.fit_transform(PCA_X), 
+                            columns = PCA_X.columns)
+
+### Se determina el número de componentes
+PCA_N = PCA(n_components = 1)
+PCA_COMPONENTE = PCA_N.fit_transform(PCA_X_SCALER)
+```
+
+
+> Se calcula la varianza total por respecto al numero de componentes
+```{python}
+#| eval: false
+### Se calcula la varianza total por respecto al numero de componentes
+VARIANZA_TOTA = PCA_N.explained_variance_ratio_.sum() * 100
+print("\n Total de la variancia explicada \n", round(VARIANZA_TOTA,3), "%")
+```
+
+> Con una componente (PC1) se explica 66.82 % de la varianza total, lo cual implica que mas de la mitad de la información e los datos puede encapsularse en ese componente principal.
+
+
+> finalmente se indexan los resultados a la base de datos como una nueva columna con clave DIS_COL = concentrated disadvantage component 
+
+```{python}
+#| eval: false
+### Pegamos los valores de PCA en la base de datos
+PCA_COLONIAS['DIS_COL'] = PCA_COMPONENTE
+PCA_COLONIAS.head(5)
+```
+
+::: {.callout-important icon=false}
+## Impotante
+Lo anterior lo transformamos a una funcion para optimizar el proceso de trabajo. Funcion que podemos llamar despues 
+:::
+
+```{python}
+#| eval: false
+
+def CONC_DIS (TABLA, DIM_CLAVE, DIM_POBLA):
+    
+    PCA_TABLA = TABLA.copy()
+    
+    ### Seleccion de las dimensiones con las que se calcula el indice de desventajas "PSINDER; PROM_OCUP; P3YM_HLI; P_15A24_M"
+     
+    PCA_X = PCA_TABLA.drop([DIM_CLAVE, DIM_POBLA], axis = 1)
+    PCA_y = PCA_TABLA[[DIM_CLAVE]]
+    
+    ### Se normaliza la informacion por Z-Score
+    
+    S_TRANSF = StandardScaler()
+    PCA_X_SCALER = pd.DataFrame( S_TRANSF.fit_transform(PCA_X), 
+                                 columns = PCA_X.columns)
+                                 
+    ### Se determina el número de componentes
+    
+    PCA_N = PCA(n_components = 1)
+    PCA_COMPONENTE = PCA_N.fit_transform(PCA_X_SCALER)
+    
+    ### Se calcula la varianza total por respecto al numero de componentes
+     
+    VARIANZA_TOTA = PCA_N.explained_variance_ratio_.sum() * 100
+
+    print("\n Total de la variancia explicada \n", round(VARIANZA_TOTA,3), "%")
+    ### Se indexan los resultados a la base de datos como una nueva columna con clave DIS_COL = concentrated disadvantage component 
+    
+    PCA_TABLA['DISAD'] = PCA_COMPONENTE
+
+    PCA_TABLA = PCA_TABLA[[DIM_CLAVE, 'DISAD' ]]
+
+    return (PCA_TABLA)
+
+```
+
+
+> Podemos usar la función creada y aplicarla en los datos para revalidar los resultados.
+
+```{python}
+#| eval: false
+
+### Revalidación de información
+
+DESVE_COL = CONC_DIS (COLONIA_PCA, 'CVE_COL','POBTOT')
+DESVE_COL.head(2)
+```
+
+### NIVEL ALCALIDAS
+
+> El Agrupamiento de datos por nivel Alcaldia para "PCA". Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()
+
+```{python}
+#| eval: false
+ALCALDIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['MUN']).agg({'POBTOT': 'sum', 
+                                                                  'PSINDER':'sum',
+                                                                  'PROM_OCUP': 'mean',
+                                                                  'P3YM_HLI':'sum',
+                                                                  'P_15A24_M': 'sum'}).reset_index())
+ALCALDIA_PCA.head(2)
+```
+
+> Aplicamos la funcion creada con anterioridad
+
+```{python}
+#| eval: false
+### Aplicando la función creada arriba
+
+DESVE_ALCA = CONC_DIS (ALCALDIA_PCA, 'MUN','POBTOT')
+DESVE_ALCA.head(2)
+```
+
+
+> En este punto, podemos unir toda la información a la tabla original y renombramos las columnas de desventajas en cada nivel
+
+```{python}
+#| eval: false
+MERGE_DESVENTAJAS = DATA_FIN_USE.merge(DESVE_COL, 
+                                       left_on = 'CVE_COL', 
+                                       right_on = 'CVE_COL', 
+                                       how = 'inner').merge(DESVE_ALCA, 
+                                                            left_on ='MUN', 
+                                                            right_on = 'MUN' , 
+                                                            how = 'inner').rename({"DISAD_x": "DIS_COL", "DISAD_y": "DIS_MUN"}, axis = 1)
+
+MERGE_DESVENTAJAS.head(2)
+```
+
+> Hacemos un mapita nuevamente
+
+```{python}
+#| eval: false
+
+fig, ax = plt.subplots(figsize=(8, 8))
+ax = MERGE_DESVENTAJAS.plot(ax = ax, column='DIS_COL',
+                            legend= True,
+                            alpha=0.8,
+                            scheme='NaturalBreaks',
+                            cmap='copper',
+                            classification_kwds={'k':6})
+ax.set(title='Desventajas a nivel Colonia, Ciudad de México')
+
+ax.set_axis_off()
+
+plt.show()
+```
+
+```{python}
+#| eval: false
+
+fig, ax = plt.subplots(figsize=(8, 8))
+ax = MERGE_DESVENTAJAS.plot(ax = ax, column='DIS_MUN',
+                            legend= True,
+                            alpha=0.8,
+                            scheme='NaturalBreaks',
+                            cmap='copper',
+                            classification_kwds={'k':6})
+ax.set(title='Desventajas a nivel Alcaldias, Ciudad de México')
+
+ax.set_axis_off()
+
+plt.show()
+```
