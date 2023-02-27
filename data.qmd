@@ -5,4 +5,6 @@ format: html
 
 # Adquisition 
 
+esta seccion se me esta trabndo 
+
 # Preprocessing
