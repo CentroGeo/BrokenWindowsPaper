@@ -11,3 +11,56 @@ format: html
 
 
 # Preprocessing
+
+# Preprocessing
+
+## Índice de concentración de desventajas
+
+Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son:
+- Porcentaje de masculinos de 15 a 29
+- Porcentaje de población sin servicios a salud
+- Promedio de habitantes que ocupan un hogar privado
+- Porcentaje de personas que hablan una lengua indigena
+
+Con base al Censo de población de 2020, las dimensiones se resumen de la forma:
+
+```{python}
+#| eval: true
+#| echo: false
+from tabulate import tabulate
+from IPython.display import Markdown
+
+table = [["P_15A17_M","Población masculina de 15 a 17 años"],
+         ["P_18A24_M","Población masculina de 18 a 24 años"],
+         ["PSINDER","Población sin afiliación a servicios de salud"],
+         ["PROM_OCUP",'Promedio de ocupantes en viviendas particulares habitadas'],
+         ["P3YM_HLI", "Población de 3 años y más que habla alguna lengua indígena"]]
+Markdown(tabulate(
+  table, 
+  headers=["Clave","Descripción"]))
+```
+
+> > La primer parte consta de cargar la base de datos de censo, seleccionar las dimensiones, limpiar la información y preparala para poder hacerla únion de estas en la geometry de la unidd geografica manzanas. Se cargan las librerias necesarias.
+
+```{python}
+#| eval: true
+#| echo: true
+## Librerias 
+
+import numpy as np
+import pandas as pd
+import geopandas as gpd
+import contextily as ctx
+import matplotlib.pyplot as plt
+from IPython.display import Markdown
+from sklearn.decomposition import PCA
+from sklearn.preprocessing import StandardScaler
+
+### Warnings
+import warnings
+warnings.filterwarnings('ignore')
+
+
+```
+
+> Se carga la información del Censo por unidad manzanas conservando unicamente los campos de interes: **ENTIDAD, NOM_ENT, MUN, NOM_MUN LOC, NOM_LOC, AGEB, MZA, POBTOT, P_15A17_M, P_18A24_M, PSINDER, PROM_OCUP y P3YM_HLI**
