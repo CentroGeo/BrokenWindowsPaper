@@ -43,7 +43,7 @@ Markdown(tabulate(
 > > La primer parte consta de cargar la base de datos de censo, seleccionar las dimensiones, limpiar la información y preparala para poder hacerla únion de estas en la geometry de la unidd geografica manzanas. Se cargan las librerias necesarias.
 
 ```{python}
-#| eval: true
+#| eval: false
 #| echo: true
 ## Librerias 
 
@@ -83,3 +83,63 @@ CENSO_2020 = CENSO_2020 [['ENTIDAD','NOM_ENT','MUN',
 
 CENSO_2020.head(2)                          
 ```
+
+> De la base de datos filtramos eliminando las filas que contienen los totales 
+
+```{python}
+#| eval: false
+Values = ['Total de la entidad','Total del municipio',
+         'Total de la localidad urbana', 'Total AGEB urbana']
+CENSO_2020_USE = CENSO_2020.query("NOM_LOC != @Values")
+
+CENSO_2020_USE.head(2)
+
+```
+
+
+> Dentro de la base de datos existe la presencia de filas donde los valores son simbolos o caracteres especiales(*, N/D, 99999, etc), por lo que es necesario remplazarlos por valores NAN.
+
+```{python}
+#| eval: false
+CENSO_2020_USE = CENSO_2020_USE.replace({'999999999': np.nan, 
+                                         '99999999': np.nan,
+                                         '*': np.nan,
+                                         'N/D': np.nan})
+                  
+DIM_NUM = CENSO_2020_USE.iloc[: , -6:].columns.tolist()
+DIM_TEXT = CENSO_2020_USE.iloc[:, :8].columns.tolist()
+
+CENSO_2020_USE[DIM_NUM] = CENSO_2020_USE[DIM_NUM].astype('float')
+CENSO_2020_USE[DIM_TEXT] = CENSO_2020_USE[DIM_TEXT].astype(str)
+```
+
+> De igual manera la información referida a a las columnas de "Entidad, Municipio, Localidad, AGEB y Manzana", no presetan el formato necesario para crear la columna CVEGEO, por lo que debemos completar la información de la forma correcta.
+
+> Creada la columna CVEGEO, calculamos la dimensión población masculina de 15 a 24 años como la suma de "P_15A17_M y P_18A24_M". Una vez que hemos creado la dimensión se hacen poco necesarias "P_15A17_M y P_18A24_M, por lo que se eliminan.
+
+
+```{python}
+#| eval: false
+## Corrección de información
+CENSO_2020_USE['ENTIDAD'] = CENSO_2020_USE['ENTIDAD'].str.zfill(2)
+CENSO_2020_USE['MUN'] = CENSO_2020_USE['MUN'].str.zfill(3)
+CENSO_2020_USE['LOC'] = CENSO_2020_USE['LOC'].str.zfill(4)
+CENSO_2020_USE['AGEB'] = CENSO_2020_USE['AGEB'].str.zfill(4)  
+CENSO_2020_USE['MZA'] = CENSO_2020_USE['MZA'].str.zfill(3)
+
+CENSO_2020_USE['CVEGEO'] = CENSO_2020_USE[['ENTIDAD', 'MUN',
+                                           'LOC','AGEB','MZA']].agg(''.join, axis=1)
+
+## Cálculo de Población masculina de 15 a 24 años
+CENSO_2020_USE['P_15A24_M'] = CENSO_2020_USE[["P_15A17_M", 
+                                              "P_18A24_M"]].sum(axis=1, 
+                                                                min_count=1)
+
+## Eliminación de dimensiones
+CENSO_2020_USE = CENSO_2020_USE.drop(['P_15A17_M','P_18A24_M'], axis = 1)
+
+CENSO_2020_USE.head(2)
+```
+
+
+> Se carga la base de datos geoespacial que corresponde a la unidad geografica de "manzanas". Para este caso, el archivo se encuentra en formato "json". Del archivo, unicamente consideramos las columnas "CVEGEO y geometry"
