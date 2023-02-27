@@ -236,6 +236,7 @@ INTERSECCION = gpd.overlay(COLONIAS_METROS,
 
 ```{python}
 #| eval: false
+## Se calcula el area 
 INTERSECCION['area'] = INTERSECCION.geometry.area
 ```
 
