@@ -296,6 +296,16 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <blockquote class="blockquote">
 <p>Se carga la información del Censo por unidad manzanas conservando unicamente los campos de interes: <strong>ENTIDAD, NOM_ENT, MUN, NOM_MUN LOC, NOM_LOC, AGEB, MZA, POBTOT, P_15A17_M, P_18A24_M, PSINDER, PROM_OCUP y P3YM_HLI</strong></p>
 </blockquote>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>CENSO_2020 <span class="op">=</span>  pd.read_csv(Entradas <span class="op">+</span> <span class="st">'MANZANAS.csv'</span>, encoding <span class="op">=</span> <span class="st">'Latin-1'</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>CENSO_2020 <span class="op">=</span> CENSO_2020 [[<span class="st">'ENTIDAD'</span>,<span class="st">'NOM_ENT'</span>,<span class="st">'MUN'</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'NOM_MUN'</span>,<span class="st">'LOC'</span>,<span class="st">'NOM_LOC'</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'AGEB'</span>,<span class="st">'MZA'</span>,<span class="st">'POBTOT'</span>, </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'P_15A17_M'</span>,<span class="st">'P_18A24_M'</span>,<span class="st">'PSINDER'</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PROM_OCUP'</span>, <span class="st">'P3YM_HLI'</span>]]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>CENSO_2020.head(<span class="dv">2</span>)                          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 
 
 </section>
