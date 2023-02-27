@@ -5,6 +5,9 @@ format: html
 
 # Adquisition 
 
-esta seccion se me esta trabndo 
+[Censo de poblacion 2020](https://www.inegi.org.mx/programas/ccpv/2020/default.html#Microdatos)
+
+[Descarga masiva Manzanas](https://www.inegi.org.mx/app/descarga/?ti=13&ag=01)
+
 
 # Preprocessing
