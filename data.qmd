@@ -143,3 +143,209 @@ CENSO_2020_USE.head(2)
 
 
 > Se carga la base de datos geoespacial que corresponde a la unidad geografica de "manzanas". Para este caso, el archivo se encuentra en formato "json". Del archivo, unicamente consideramos las columnas "CVEGEO y geometry"
+
+
+
+```{python}
+#| eval: false
+### Se carga el archivo espacial de Manzanas
+
+MANZA_CDMX = gpd.read_file(Entradas +'MANZA_CDMX.json')
+MANZA_CDMX = MANZA_CDMX[['CVEGEO','geometry']]
+MANZA_CDMX.head(2)
+```
+
+> Union (merge) de las unidades geoespaciales con la información del Censo de Población y vivienda 2020. En este punto a cada unidad geografica le asignamos la información del censo de población.
+
+
+```{python}
+#| eval: false
+
+### Union a la izquierda con campo llave primaria "CVEGEO"
+MERGE = MANZA_CDMX.merge( CENSO_2020_USE,
+                          left_on = 'CVEGEO',
+                          right_on = 'CVEGEO',
+                          how = 'inner')
+MERGE.head(2)          
+```
+
+> Siempre es importante saber en que sistema de proyección se encuentran nuestros datos, para eso usamos "crs"
+
+```{python}
+#| eval: false
+MERGE.crs
+```
+
+
+> Hacemos un mapa por que nos gustan los mapitas.
+
+```{python}
+#| eval: false
+fig, ax = plt.subplots(figsize=(8, 8))
+ax = MERGE.plot(ax = ax, column='P_15A24_M',
+                legend=False,
+                alpha=0.8,
+                scheme='NaturalBreaks',
+                cmap='copper',
+                classification_kwds={'k':6})
+ax.set(title='Población Masculina 15 a 24 años, Ciudad de México')
+
+ax.set_axis_off()
+
+plt.show()
+
+```
+
+
+> Hasta el punto anterior tenemos la información contenida dentro de las manzanas, el paso que sigue es llevar las manzanas a colonias. Para esto es necesario entender que ambos elementos son poligonales y que los centroides de manzanas no necesariamente refieren a la solución contenida dentro de un poligono mayor.
+
+> Por eso es necesario usar el criterio de maxima área de la sobreposición de poligonos. Al hablar de área el sistema de proyección debe estar en metros, por lo que si no lo esta se debe cambiar. Para este caso se cambio a [EPSG:6362](https://epsg.io/6362)
+
+> Se cargan las colonias y se valida que ambos crs se encuentren en metros "6362 o 6362" , en caso contrario es necesrio llevar a cabo una reproyección.
+
+```{python}
+#| eval: false
+COLONIAS_CDMX = gpd.read_file(Entradas +'COLONIAS.json')
+print("Colonias CRS", COLONIAS_CDMX.crs)
+print("Manzanas CRS", MERGE.crs)
+```
+
+> Los archivos estan en coordenadas geograficas, por lo que se reproyecta
+
+```{python}
+#| eval: false
+MANZANA_METROS = MERGE.to_crs(6362)
+COLONIAS_METROS = COLONIAS_CDMX.to_crs(6362)
+
+print("Crs Manzanas", MANZANA_METROS.crs )
+print("Crs Colonias", COLONIAS_METROS.crs )
+```
+
+
+> Buscamos en este punto identificar la intersección entre colonias y manzanas para asignar a cada manzana (base al criterio de área maxima) la clave de la colonia a la que pertence.
+
+```{python}
+#| eval: false
+INTERSECCION = gpd.overlay(COLONIAS_METROS,
+                           MANZANA_METROS,
+                            how = 'intersection')
+
+```
+
+> Se calcula el valor de área para cada poligono intersectado
+
+```{python}
+#| eval: false
+INTERSECCION['area'] = INTERSECCION.geometry.area
+```
+
+> Para el overlay se reordena la información del área de manera descendente y se eliminan los duplicados con base a la "CVEGEO" manteniendo unicamente el primer valor
+
+```{python}
+#| eval: false
+INTERSECCION = (INTERSECCION.sort_values('area', ascending = False).
+                drop_duplicates(subset="CVEGEO", keep = 'first').
+                drop(['geometry','area'], axis = 1))
+
+### Se eliminan columnas no necesarias
+INTERSECCION_USE = INTERSECCION.drop(['ENT', 'CVEDT', 'NOMDT', 'DTTOLOC'], axis = 1)
+
+```
+
+> En la base de colonias se identificaron caracteres especiales, por lo que se procede a remplazarlos, por su valor correspondiente.
+
+```{python}
+#| eval: false
+
+Dic_Ca = {'Ã‘': 'Ñ'}
+INTERSECCION_USE.replace(Dic_Ca, inplace=True, regex=True)
+INTERSECCION_USE.columns = INTERSECCION_USE.columns.to_series().replace(Dic_Ca, regex=True)
+
+INTERSECCION_USE.shape
+
+```
+
+
+> Se une la información de overly de las Manzanas ya alineadas con colonias en la geometry de las manzanas para tener la base final. En la base final podemos observar la información a nivel: manzana, colonia y alcaldia, donde esta ultima se extraer en razon directa de la informacion contenida en la base de manzanas.
+
+```{python}
+#| eval: false
+DATA_FINAL_USE = MANZA_CDMX.merge(INTERSECCION_USE,
+                          left_on = 'CVEGEO',
+                          right_on = 'CVEGEO',
+                          how = 'inner').rename({"CVEUT": "CVE_COL", "NOMUT": "NOM_COL", "ID": "ID_COL"}, axis = 1)
+DATA_FINAL_USE.shape
+
+```
+
+> Se valida que cada manzana este asociada a cada una de las colonias  
+Recorndado que la relación es una colonia a muchas manzanzanas  
+"" Por lo que no deben existir manzanas repetididas"
+
+$$M_{n-1} = f(C)$$
+$$ C \gets M_{n-1}$$
+
+> Se valida que no existan manzanas repetidas
+```{python}
+#| eval: false
+DATA_FINAL_USE.CVEGEO.value_counts()
+```
+
+> La relacion de muchas manzanas a una colonia, se valida para cada clave de colonias se repite tantas veces existan manzanas
+
+```{python}
+#| eval: false
+DATA_FINAL_USE.CVE_COL.value_counts()
+```
+
+
+> Aqui validamos como las claves de las manzanas son diferentes para una misma colonia y se entiende la relacion, muchas manzanas a una colonia
+
+```{python}
+#| eval: false
+DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
+```
+
+> Reordenamos la información de la forma "Regional a local" es decir:
+
+$$ Alcaldia \to Colonia \to Manzana $$
+
+1. **Alcaldia**: _ENTIDAD, NOM_ENT, MUN, NOM_MUN, LOC, NOM_LOC,_  
+2. **Colonia**: _ID_COL, CVE_COL, NOM_COL,_ 
+3. **Manzana**: _AGEB, MZA, CVEGEO,_
+3. **Dimensiones**: _POBTOT, PSINDER, PROM_OCUP, P3YM_HLI, P_15A24_M_
+4. **Geometry**
+
+
+> Reordenamiento de la información
+
+```{python}
+#| eval: false
+DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC',
+                               'ID_COL','CVE_COL', 'NOM_COL', 'AGEB', 'MZA',
+                               'POBTOT', 'PSINDER', 'PROM_OCUP', 'P3YM_HLI', 'P_15A24_M',
+                               'geometry']]
+
+DATA_FIN_USE.head(3)
+```
+
+> Hacemos un mapita porque nos gustan los mapitas 
+
+```{python}
+#| eval: false
+
+fig, ax = plt.subplots(figsize=(8, 8))
+ax = DATA_FIN_USE.plot(ax = ax, column='P_15A24_M',
+                       legend= False,
+                       alpha=0.8,
+                       scheme='NaturalBreaks',
+                       cmap='copper',
+                       classification_kwds={'k':6})
+ax.set(title='Población Masculina 15 a 24 años, Ciudad de México')
+
+ax.set_axis_off()
+
+plt.show()
+```
+
+## Análisis de Componentes Principales (PCA)
