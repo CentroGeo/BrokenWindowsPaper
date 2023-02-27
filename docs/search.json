@@ -1,10 +1,10 @@
 [
   {
-    "objectID": "data.html",
-    "href": "data.html",
-    "title": "2  Data Acquisition and Preprocessing",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "BOOK_PAPER",
     "section": "",
-    "text": "3 Adquisition\n\n\n4 Preprocessing"
+    "text": "Preface\nThis is a Quarto book.\nTo learn more about Quarto books visit https://quarto.org/docs/books."
   },
   {
     "objectID": "intro.html",
@@ -12,6 +12,20 @@
     "title": "1  Introduction",
     "section": "",
     "text": "Aquí va la introducción y algunos antecedentes Tener muy claro el planteamiento del problema Definir subsecciones"
+  },
+  {
+    "objectID": "data.html",
+    "href": "data.html",
+    "title": "2  Data Acquisition and Preprocessing",
+    "section": "",
+    "text": "3 Adquisition\nCenso de poblacion 2020\nDescarga masiva Manzanas"
+  },
+  {
+    "objectID": "data.html#índice-de-concentración-de-desventajas",
+    "href": "data.html#índice-de-concentración-de-desventajas",
+    "title": "2  Data Acquisition and Preprocessing",
+    "section": "5.1 Índice de concentración de desventajas",
+    "text": "5.1 Índice de concentración de desventajas\nConstruido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son: - Porcentaje de masculinos de 15 a 29 - Porcentaje de población sin servicios a salud - Promedio de habitantes que ocupan un hogar privado - Porcentaje de personas que hablan una lengua indigena\nCon base al Censo de población de 2020, las dimensiones se resumen de la forma:\n\n\n\n\n\nClave\nDescripción\n\n\n\n\nP_15A17_M\nPoblación masculina de 15 a 17 años\n\n\nP_18A24_M\nPoblación masculina de 18 a 24 años\n\n\nPSINDER\nPoblación sin afiliación a servicios de salud\n\n\nPROM_OCUP\nPromedio de ocupantes en viviendas particulares habitadas\n\n\nP3YM_HLI\nPoblación de 3 años y más que habla alguna lengua indígena\n\n\n\n\n\n\n\nLa primer parte consta de cargar la base de datos de censo, seleccionar las dimensiones, limpiar la información y preparala para poder hacerla únion de estas en la geometry de la unidd geografica manzanas. Se cargan las librerias necesarias.\n\n\n\n## Librerias \n\nimport numpy as np\nimport pandas as pd\nimport geopandas as gpd\nimport contextily as ctx\nimport matplotlib.pyplot as plt\nfrom IPython.display import Markdown\nfrom sklearn.decomposition import PCA\nfrom sklearn.preprocessing import StandardScaler\n\n### Warnings\nimport warnings\nwarnings.filterwarnings('ignore')\n\n\nSe carga la información del Censo por unidad manzanas conservando unicamente los campos de interes: ENTIDAD, NOM_ENT, MUN, NOM_MUN LOC, NOM_LOC, AGEB, MZA, POBTOT, P_15A17_M, P_18A24_M, PSINDER, PROM_OCUP y P3YM_HLI"
   },
   {
     "objectID": "summary.html",
