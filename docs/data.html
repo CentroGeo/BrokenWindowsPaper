@@ -197,16 +197,15 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
    
   <ul>
   <li><a href="#adquisition" id="toc-adquisition" class="nav-link active" data-scroll-target="#adquisition"><span class="toc-section-number">3</span>  Adquisition</a></li>
-  <li><a href="#preprocessing" id="toc-preprocessing" class="nav-link" data-scroll-target="#preprocessing"><span class="toc-section-number">4</span>  Preprocessing</a></li>
-  <li><a href="#preprocessing-1" id="toc-preprocessing-1" class="nav-link" data-scroll-target="#preprocessing-1"><span class="toc-section-number">5</span>  Preprocessing</a>
+  <li><a href="#concentración-de-desventajas" id="toc-concentración-de-desventajas" class="nav-link" data-scroll-target="#concentración-de-desventajas"><span class="toc-section-number">4</span>  Concentración de desventajas</a>
   <ul class="collapse">
-  <li><a href="#índice-de-concentración-de-desventajas" id="toc-índice-de-concentración-de-desventajas" class="nav-link" data-scroll-target="#índice-de-concentración-de-desventajas"><span class="toc-section-number">5.1</span>  Índice de concentración de desventajas</a></li>
-  <li><a href="#análisis-de-componentes-principales-pca" id="toc-análisis-de-componentes-principales-pca" class="nav-link" data-scroll-target="#análisis-de-componentes-principales-pca"><span class="toc-section-number">5.2</span>  Análisis de Componentes Principales (PCA)</a>
+  <li><a href="#análisis-de-componentes-principales-pca" id="toc-análisis-de-componentes-principales-pca" class="nav-link" data-scroll-target="#análisis-de-componentes-principales-pca"><span class="toc-section-number">4.1</span>  Análisis de Componentes Principales (PCA)</a>
   <ul class="collapse">
-  <li><a href="#nivel-colonias" id="toc-nivel-colonias" class="nav-link" data-scroll-target="#nivel-colonias"><span class="toc-section-number">5.2.1</span>  NIVEL COLONIAS</a></li>
-  <li><a href="#nivel-alcalidas" id="toc-nivel-alcalidas" class="nav-link" data-scroll-target="#nivel-alcalidas"><span class="toc-section-number">5.2.2</span>  NIVEL ALCALIDAS</a></li>
+  <li><a href="#nivel-colonias" id="toc-nivel-colonias" class="nav-link" data-scroll-target="#nivel-colonias"><span class="toc-section-number">4.1.1</span>  NIVEL COLONIAS</a></li>
+  <li><a href="#nivel-alcalidas" id="toc-nivel-alcalidas" class="nav-link" data-scroll-target="#nivel-alcalidas"><span class="toc-section-number">4.1.2</span>  NIVEL ALCALIDAS</a></li>
   </ul></li>
   </ul></li>
+  <li><a href="#desorden-social-y-físico" id="toc-desorden-social-y-físico" class="nav-link" data-scroll-target="#desorden-social-y-físico"><span class="toc-section-number">5</span>  Desorden Social y Físico</a></li>
   </ul>
 </nav>
     </div>
@@ -235,13 +234,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p><a href="https://www.inegi.org.mx/programas/ccpv/2020/default.html#Microdatos">Censo de poblacion 2020</a></p>
 <p><a href="https://www.inegi.org.mx/app/descarga/?ti=13&amp;ag=01">Descarga masiva Manzanas</a></p>
 </section>
-<section id="preprocessing" class="level1" data-number="4">
-<h1 data-number="4"><span class="header-section-number">4</span> Preprocessing</h1>
-</section>
-<section id="preprocessing-1" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Preprocessing</h1>
-<section id="índice-de-concentración-de-desventajas" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="índice-de-concentración-de-desventajas"><span class="header-section-number">5.1</span> Índice de concentración de desventajas</h2>
+<section id="concentración-de-desventajas" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Concentración de desventajas</h1>
 <p>Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son: - Porcentaje de masculinos de 15 a 29 - Porcentaje de población sin servicios a salud - Promedio de habitantes que ocupan un hogar privado - Porcentaje de personas que hablan una lengua indigena</p>
 <p>Con base al Censo de población de 2020, las dimensiones se resumen de la forma:</p>
 <div class="cell" data-execution_count="1">
@@ -444,7 +438,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <p>Se calcula el valor de área para cada poligono intersectado</p>
 </blockquote>
 <div class="cell" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>INTERSECCION[<span class="st">'area'</span>] <span class="op">=</span> INTERSECCION.geometry.area</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">## Se calcula el area </span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>INTERSECCION[<span class="st">'area'</span>] <span class="op">=</span> INTERSECCION.geometry.area</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <blockquote class="blockquote">
 <p>Para el overlay se reordena la información del área de manera descendente y se eliminan los duplicados con base a la “CVEGEO” manteniendo unicamente el primer valor</p>
@@ -541,14 +536,13 @@ Recorndado que la relación es una colonia a muchas manzanzanas<br>
 <span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="análisis-de-componentes-principales-pca" class="level2" data-number="5.2">
-<h2 data-number="5.2" class="anchored" data-anchor-id="análisis-de-componentes-principales-pca"><span class="header-section-number">5.2</span> Análisis de Componentes Principales (PCA)</h2>
+<section id="análisis-de-componentes-principales-pca" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="análisis-de-componentes-principales-pca"><span class="header-section-number">4.1</span> Análisis de Componentes Principales (PCA)</h2>
 <blockquote class="blockquote">
 <p>En esta sección se cálcula el indice de <strong><em>Concetración de desventajas</em></strong> mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel <strong>Alcaldias y Delegaciones</strong>. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.</p>
 </blockquote>
-<section id="nivel-colonias" class="level3" data-number="5.2.1">
-<h3 data-number="5.2.1" class="anchored" data-anchor-id="nivel-colonias"><span class="header-section-number">5.2.1</span> NIVEL COLONIAS</h3>
+<section id="nivel-colonias" class="level3" data-number="4.1.1">
+<h3 data-number="4.1.1" class="anchored" data-anchor-id="nivel-colonias"><span class="header-section-number">4.1.1</span> NIVEL COLONIAS</h3>
 <blockquote class="blockquote">
 <p>Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por “PCA”</p>
 </blockquote>
@@ -676,8 +670,8 @@ Impotante
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>DESVE_COL.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="nivel-alcalidas" class="level3" data-number="5.2.2">
-<h3 data-number="5.2.2" class="anchored" data-anchor-id="nivel-alcalidas"><span class="header-section-number">5.2.2</span> NIVEL ALCALIDAS</h3>
+<section id="nivel-alcalidas" class="level3" data-number="4.1.2">
+<h3 data-number="4.1.2" class="anchored" data-anchor-id="nivel-alcalidas"><span class="header-section-number">4.1.2</span> NIVEL ALCALIDAS</h3>
 <blockquote class="blockquote">
 <p>El Agrupamiento de datos por nivel Alcaldia para “PCA”. Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()</p>
 </blockquote>
@@ -743,10 +737,13 @@ Impotante
 <span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-
-
 </section>
 </section>
+</section>
+<section id="desorden-social-y-físico" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Desorden Social y Físico</h1>
+
+
 </section>
 
 </main> <!-- /main -->

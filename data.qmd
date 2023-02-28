@@ -9,12 +9,7 @@ format: html
 
 [Descarga masiva Manzanas](https://www.inegi.org.mx/app/descarga/?ti=13&ag=01)
 
-
-# Preprocessing
-
-# Preprocessing
-
-## Índice de concentración de desventajas
+# Concentración de desventajas
 
 Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son:
 - Porcentaje de masculinos de 15 a 29
@@ -556,3 +551,6 @@ ax.set_axis_off()
 
 plt.show()
 ```
+
+
+# Desorden Social y Físico
