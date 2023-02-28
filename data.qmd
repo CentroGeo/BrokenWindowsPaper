@@ -9,6 +9,8 @@ format: html
 
 [Descarga masiva Manzanas](https://www.inegi.org.mx/app/descarga/?ti=13&ag=01)
 
+[Llamadas del 911](https://datos.cdmx.gob.mx/dataset/llamadas-numero-de-atencion-a-emergencias-911)
+
 # Concentración de desventajas
 
 Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son:
@@ -554,3 +556,43 @@ plt.show()
 
 
 # Desorden Social y Físico
+
+> En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres. Las dimensiones que se han de usar son las siguientes
+
+```{python}
+#| eval: true
+#| echo: false
+#| tbl-cap: Desorden Social
+table = [["Intoxicación pública con drogas",
+         "Administrativas-Drogados"],
+         ["Intoxicación pública con alcohol","Administrativas-Ebrios",],
+         ["Incidencia pública","NA"],
+         ["Orinar en público","NA"],
+         ["Denuncia de persona en riesgo", "Denuncia-Persona en Riesgo"],
+         ["Disturbios públicos escándalo callejero", "Disturbio-Escándalo"],
+         ["Disturbios públicos fiestas ruidosas", "Disturbio-Escándalo"],
+         ["Tirar basura", "Administrativas-Tirar Basura en Vía Pública"]]
+Markdown(tabulate(
+  table, 
+  headers=["Clave","Descripción"]))
+```
+
+
+```{python}
+#| eval: true
+#| echo: false
+#| tbl-cap: Desorden Físico
+table = [["Vehículo abandonado con placas", "Abandono-Vehículo" ],
+         ["Graffiti", "Administrativas-Grafitis"],
+         ["Fuga de agua potable","Derrame o Fuga-Agua Potable"],
+         ["Derrame de aguas residuales", "Derrame o Fuga-Aguas Negras"],
+         ["Líneas eléctricas caídas", "Servicios-Corto Circuito instalación o subestación eléctrica"],
+         ["Fugas de gas", "Derrame o Fuga-Gas Natural"]]
+Markdown(tabulate(
+  table, 
+  headers=["Clave","Descripción"]))
+```
+
+
+## Desorden Social
+

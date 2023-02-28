@@ -205,7 +205,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#nivel-alcalidas" id="toc-nivel-alcalidas" class="nav-link" data-scroll-target="#nivel-alcalidas"><span class="toc-section-number">4.1.2</span>  NIVEL ALCALIDAS</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#desorden-social-y-físico" id="toc-desorden-social-y-físico" class="nav-link" data-scroll-target="#desorden-social-y-físico"><span class="toc-section-number">5</span>  Desorden Social y Físico</a></li>
+  <li><a href="#desorden-social-y-físico" id="toc-desorden-social-y-físico" class="nav-link" data-scroll-target="#desorden-social-y-físico"><span class="toc-section-number">5</span>  Desorden Social y Físico</a>
+  <ul class="collapse">
+  <li><a href="#desorden-social" id="toc-desorden-social" class="nav-link" data-scroll-target="#desorden-social"><span class="toc-section-number">5.1</span>  Desorden Social</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -233,6 +236,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1 data-number="3"><span class="header-section-number">3</span> Adquisition</h1>
 <p><a href="https://www.inegi.org.mx/programas/ccpv/2020/default.html#Microdatos">Censo de poblacion 2020</a></p>
 <p><a href="https://www.inegi.org.mx/app/descarga/?ti=13&amp;ag=01">Descarga masiva Manzanas</a></p>
+<p><a href="https://datos.cdmx.gob.mx/dataset/llamadas-numero-de-atencion-a-emergencias-911">Llamadas del 911</a></p>
 </section>
 <section id="concentración-de-desventajas" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Concentración de desventajas</h1>
@@ -742,8 +746,100 @@ Impotante
 </section>
 <section id="desorden-social-y-físico" class="level1" data-number="5">
 <h1 data-number="5"><span class="header-section-number">5</span> Desorden Social y Físico</h1>
+<blockquote class="blockquote">
+<p>En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres. Las dimensiones que se han de usar son las siguientes</p>
+</blockquote>
+<div class="cell" data-execution_count="36">
+<div class="cell-output cell-output-display" data-execution_count="2">
+<table class="table table-sm table-striped">
+<caption>Desorden Social </caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Clave</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Intoxicación pública con drogas</td>
+<td style="text-align: left;">Administrativas-Drogados</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Intoxicación pública con alcohol</td>
+<td style="text-align: left;">Administrativas-Ebrios</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Incidencia pública</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Orinar en público</td>
+<td style="text-align: left;">NA</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Denuncia de persona en riesgo</td>
+<td style="text-align: left;">Denuncia-Persona en Riesgo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Disturbios públicos escándalo callejero</td>
+<td style="text-align: left;">Disturbio-Escándalo</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Disturbios públicos fiestas ruidosas</td>
+<td style="text-align: left;">Disturbio-Escándalo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tirar basura</td>
+<td style="text-align: left;">Administrativas-Tirar Basura en Vía Pública</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-execution_count="37">
+<div class="cell-output cell-output-display" data-execution_count="3">
+<table class="table table-sm table-striped">
+<caption>Desorden Físico </caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Clave</th>
+<th style="text-align: left;">Descripción</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Vehículo abandonado con placas</td>
+<td style="text-align: left;">Abandono-Vehículo</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Graffiti</td>
+<td style="text-align: left;">Administrativas-Grafitis</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Fuga de agua potable</td>
+<td style="text-align: left;">Derrame o Fuga-Agua Potable</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Derrame de aguas residuales</td>
+<td style="text-align: left;">Derrame o Fuga-Aguas Negras</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Líneas eléctricas caídas</td>
+<td style="text-align: left;">Servicios-Corto Circuito instalación o subestación eléctrica</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Fugas de gas</td>
+<td style="text-align: left;">Derrame o Fuga-Gas Natural</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<section id="desorden-social" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="desorden-social"><span class="header-section-number">5.1</span> Desorden Social</h2>
 
 
+</section>
 </section>
 
 </main> <!-- /main -->

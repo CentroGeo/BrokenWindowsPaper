@@ -18,7 +18,7 @@
     "href": "data.html",
     "title": "2  Data Acquisition and Preprocessing",
     "section": "",
-    "text": "3 Adquisition\nCenso de poblacion 2020\nDescarga masiva Manzanas\nConstruido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son: - Porcentaje de masculinos de 15 a 29 - Porcentaje de población sin servicios a salud - Promedio de habitantes que ocupan un hogar privado - Porcentaje de personas que hablan una lengua indigena\nCon base al Censo de población de 2020, las dimensiones se resumen de la forma:\n\\[M_{n-1} = f(C)\\] \\[ C \\gets M_{n-1}\\]\n\\[ Alcaldia \\to Colonia \\to Manzana \\]"
+    "text": "3 Adquisition\nCenso de poblacion 2020\nDescarga masiva Manzanas\nLlamadas del 911\nConstruido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son: - Porcentaje de masculinos de 15 a 29 - Porcentaje de población sin servicios a salud - Promedio de habitantes que ocupan un hogar privado - Porcentaje de personas que hablan una lengua indigena\nCon base al Censo de población de 2020, las dimensiones se resumen de la forma:\n\\[M_{n-1} = f(C)\\] \\[ C \\gets M_{n-1}\\]\n\\[ Alcaldia \\to Colonia \\to Manzana \\]"
   },
   {
     "objectID": "data.html#índice-de-concentración-de-desventajas",
@@ -47,5 +47,12 @@
     "title": "2  Data Acquisition and Preprocessing",
     "section": "4.3 LLAMADAS DEL 911",
     "text": "4.3 LLAMADAS DEL 911"
+  },
+  {
+    "objectID": "data.html#desorden-social",
+    "href": "data.html#desorden-social",
+    "title": "2  Data Acquisition and Preprocessing",
+    "section": "5.1 Desorden Social",
+    "text": "5.1 Desorden Social"
   }
 ]
