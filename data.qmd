@@ -557,7 +557,9 @@ plt.show()
 
 # Desorden Social y Físico
 
-> En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres. Las dimensiones que se han de usar son las siguientes
+> En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres, para este caso se han usado las llamadas del primer y segundo semestre del 2021.
+
+> Las dimensiones que se han de usar son las siguientes
 
 ```{python}
 #| eval: true
