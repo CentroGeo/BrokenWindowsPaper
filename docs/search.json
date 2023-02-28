@@ -53,6 +53,6 @@
     "href": "data.html#desorden-social",
     "title": "2  Data Acquisition and Preprocessing",
     "section": "5.1 Desorden Social",
-    "text": "5.1 Desorden Social"
+    "text": "5.1 Desorden Social\n\nSe cargan las bases de datos correspondientes a los semestres del añp 2021 y se concatenan a un solo dataframe para tener todos los meses\n\n\nLL_911_s1 =  pd.read_csv('llamadas_911_2021_s1.csv', encoding = 'Latin-1')\nLL_911_s2 =  pd.read_csv('llamadas_911_2021_s2.csv', encoding = 'Latin-1')\n\n### Concatenaciones\nFrame_C = [LL_911_s1, LL_911_s2]\nAll_Data = pd.concat(Frame_C)\n\n\nValidamos que esten todos los meses en la columna “mes_cierre”\n\n\nAll_Data.mes_cierre.value_counts()"
   }
 ]
