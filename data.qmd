@@ -801,3 +801,177 @@ SOCIAL_FISICO.head(3)
 
 
 
+### Desorden Social y Fisico a nivel Colonia 
+
+> De la misma forma que se ejecuto codigo pasado, lo que necesitamos es el grupamiento de datos por nivel colonia para calcular la componente de Desorden Social por  "PCA"
+
+```{python}
+#| eval: true
+
+### Agrupación de datos 
+SOCIAL_PCA = pd.DataFrame(SOCIAL_FISICO.groupby(['CVE_COL']).agg({'POBTOT':'sum',
+                                                                  'DM_DROGADO': 'sum',
+                                                                  'DM_EBRIO':'sum',
+                                                                  'DM_ESCANDALO': 'sum',
+                                                                  'DM_FIESTA':'sum',
+                                                                  'DM_BASURA_P': 'sum',
+                                                                  'DM_PERSO_R': 'sum'}).reset_index())
+SOCIAL_PCA.head(2)
+```
+
+> **PCA DESORDEN SOCIAL**
+
+> De igual manera aplicamos la funcion creada en pasos anteriores
+
+```{python}
+#| eval: true
+DESORDEN_SOCIAL = CONC_DIS(SOCIAL_PCA, 'CVE_COL','POBTOT')
+DESORDEN_SOCIAL.head(2)
+```
+
+
+> Ahora, con las dimensioes con las que se calcula el desorden fisico, agrupamos los datos por nivel colonia para calcular la componente por  "PCA"
+
+```{python}
+#| eval: true
+### Agrupamiento de datos por nivel colonia para "PCA" DESORDEN FISICO
+
+FISICO_PCA = pd.DataFrame(SOCIAL_FISICO.groupby(['CVE_COL']).agg({'POBTOT':'sum',
+                                                                  'DM_VEHICULO': 'sum',
+                                                                  'DM_GRAFITI':'sum',
+                                                                  'DM_AGUA_P': 'sum',
+                                                                  'DM_AGUA_N':'sum',
+                                                                  'DM_CORTO_ELE': 'sum',
+                                                                  'DM_FUGAS_N': 'sum'}).reset_index())
+FISICO_PCA.head(2)
+```
+
+
+> Nuevamente, aplicamos la funcion creada en pasos anteriores
+
+```{python}
+#| eval: true
+#### Aplicamos la funcion creada en pasos anteriores
+
+DESORDEN_FISICO = CONC_DIS(FISICO_PCA, 'CVE_COL','POBTOT')
+DESORDEN_FISICO.head(2)
+```
+
+### Desorden Social y Fisico a nivel Alcaldia 
+
+> El agrupamiento se hace ahora por alcaldia o Municipio para desorden social
+
+```{python}
+#| eval: true
+### Agrupamiento de datos por nivel Alcaldia para "PCA" DESORDEN SOCIAL
+
+SOCIAL_ALPCA = pd.DataFrame(SOCIAL_FISICO.groupby(['MUN']).agg({'POBTOT':'sum',
+                                                              'DM_DROGADO': 'sum',
+                                                              'DM_EBRIO':'sum',
+                                                              'DM_ESCANDALO': 'sum',
+                                                              'DM_FIESTA':'sum',
+                                                              'DM_BASURA_P': 'sum',
+                                                              'DM_PERSO_R': 'sum'}).reset_index())
+SOCIAL_ALCAL = CONC_DIS(SOCIAL_ALPCA, 'MUN','POBTOT')
+SOCIAL_ALCAL.head(2)
+```
+
+
+> Aplicado el agrupamiento a municipio para desorden fisico 
+```{python}
+#| eval: true
+### Agrupamiento de datos por nivel Alcaldia para "PCA" DESORDEN FISICO
+
+FISICO_ALPCA = pd.DataFrame(SOCIAL_FISICO.groupby(['MUN']).agg({'POBTOT':'sum',
+                                                                'DM_VEHICULO': 'sum',
+                                                                'DM_GRAFITI':'sum',
+                                                                'DM_AGUA_P': 'sum',
+                                                                'DM_AGUA_N':'sum',
+                                                                'DM_CORTO_ELE': 'sum',
+                                                                'DM_FUGAS_N': 'sum'}).reset_index())
+FISICO_ALCAL = CONC_DIS(FISICO_ALPCA, 'MUN','POBTOT')
+FISICO_ALCAL.head(2)
+
+```
+
+> Ahora crearemos la base de datos finales, para eso haremos una serie de uniones con toda la información a la tabla original y renombramos las columnas de lo necesario en cada nivel.
+
+```{python}
+#| eval: true
+MERGE_SOCIAL = MERGE_DESVENTAJAS.merge(DESORDEN_SOCIAL,
+                                       left_on = 'CVE_COL', 
+                                        right_on = 'CVE_COL', 
+                                        how = 'inner').merge(SOCIAL_ALCAL,
+                                                             left_on ='MUN',
+                                                             right_on = 'MUN',
+                                                             how = 'inner').rename({"DISAD_x": "SOCIAL_COL", 
+                                                                                    "DISAD_y": "SOCIAL_MUN"}, axis = 1)
+
+MERGE_FISICO = MERGE_SOCIAL.merge(DESORDEN_FISICO,
+                                  left_on = 'CVE_COL', 
+                                  right_on = 'CVE_COL', 
+                                  how = 'inner').merge(FISICO_ALCAL,
+                                                       left_on ='MUN',
+                                                       right_on = 'MUN',
+                                                       how = 'inner').rename({"DISAD_x": "FISICO_COL", 
+                                                                              "DISAD_y": "FISICO_MUN"}, axis = 1)
+
+MERGE_FISICO.head(5)
+```
+
+
+> A este punto tendremos la base como la necesitamos, solo queda reordenar para un uso mas facil
+
+
+```{python}
+#| eval: true
+DATA_SET_FINAL = MERGE_FISICO[['ENTIDAD', 'NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC', 'ID_COL',
+                               'CVE_COL', 'NOM_COL', 'AGEB', 'MZA', 'CVEGEO', 'POBTOT',
+                               'DIS_COL', 'DIS_MUN', 'SOCIAL_COL', 'SOCIAL_MUN', 'FISICO_COL',
+                               'FISICO_MUN', 'geometry']]
+
+DATA_SET_FINAL.head(3)
+```
+
+> Hacemos otro mapita, porque ya sabemos que nos gustan
+
+```{python}
+#| eval: true
+
+fig, ax = plt.subplots(figsize=(8, 8))
+ax = DATA_SET_FINAL.plot(ax = ax, column='FISICO_MUN',
+                            legend= True,
+                            alpha=0.8,
+                            scheme='NaturalBreaks',
+                            cmap='copper',
+                            classification_kwds={'k':6})
+ax.set(title='Desorden Fisico a nivel Alcaldia, Ciudad de México')
+
+ax.set_axis_off()
+
+plt.show()
+```
+
+> Un ultimo paso es la validación de los resultados de esta forma con los obtenidos antes de las uniones a las manzanas, para eso agrupamos y calculamos la media de cada dimension
+
+```{python}
+#| eval: true
+### validamos la informacion de las dimensiones creadas
+
+DATA_SET_FINAL.groupby(['MUN']).agg({'DIS_COL':'mean',
+                                    'DIS_MUN': 'mean',
+                                    'SOCIAL_COL':'mean',
+                                    'SOCIAL_MUN': 'mean',
+                                    'FISICO_COL':'mean',
+                                    'FISICO_MUN': 'mean'
+                                    }).reset_index()
+
+```
+
+```{python}
+#| eval: true
+FISICO_ALCAL
+```
+
+
+### Caso por Mananzas y Geometria Punto
