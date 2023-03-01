@@ -322,7 +322,7 @@ $$ Alcaldia \to Colonia \to Manzana $$
 ```{python}
 #| eval: true
 DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC',
-                               'ID_COL','CVE_COL', 'NOM_COL', 'AGEB', 'MZA',
+                               'ID_COL','CVE_COL', 'NOM_COL', 'AGEB', 'MZA', 'CVEGEO',
                                'POBTOT', 'PSINDER', 'PROM_OCUP', 'P3YM_HLI', 'P_15A24_M',
                                'geometry']]
 
@@ -603,8 +603,8 @@ Markdown(tabulate(
 ```{python}
 #| eval: true
 ### Llamadas del 911 
-LL_911_s1 =  pd.read_csv('llamadas_911_2021_s1.csv', encoding = 'Latin-1')
-LL_911_s2 =  pd.read_csv('llamadas_911_2021_s2.csv', encoding = 'Latin-1')
+LL_911_s1 =  pd.read_csv(Entradas + 'llamadas_911_2021_s1.csv', encoding = 'Latin-1')
+LL_911_s2 =  pd.read_csv(Entradas + 'llamadas_911_2021_s2.csv', encoding = 'Latin-1')
 
 ### Concatenaciones de semestres
 Frame_C = [LL_911_s1, LL_911_s2]
@@ -798,3 +798,6 @@ SOCIAL_FISICO = DATA_FIN_USE.merge(MANZANA_DUMMMY,
                                    how = 'left')
 SOCIAL_FISICO.head(3)
 ```
+
+
+
