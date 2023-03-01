@@ -42,7 +42,7 @@ Markdown(tabulate(
 > > La primer parte consta de cargar la base de datos de censo, seleccionar las dimensiones, limpiar la información y preparala para poder hacerla únion de estas en la geometry de la unidd geografica manzanas. Se cargan las librerias necesarias.
 
 ```{python}
-#| eval: false
+#| eval: true
 #| echo: true
 ## Librerias 
 
@@ -66,13 +66,13 @@ warnings.filterwarnings('ignore')
 
 ```{python}
 #| echo: false
-#| eval: false
-Entradas = 'Data/'
+#| eval: true
+Entradas = '/Users/ladino/Desktop/Doctorado_Clases/'
 
 ```
 
 ```{python}
-#| eval: false
+#| eval: true
 CENSO_2020 =  pd.read_csv(Entradas + 'MANZANAS.csv', encoding = 'Latin-1')
 CENSO_2020 = CENSO_2020 [['ENTIDAD','NOM_ENT','MUN',
                           'NOM_MUN','LOC','NOM_LOC',
@@ -86,7 +86,7 @@ CENSO_2020.head(2)
 > De la base de datos filtramos eliminando las filas que contienen los totales 
 
 ```{python}
-#| eval: false
+#| eval: true
 Values = ['Total de la entidad','Total del municipio',
          'Total de la localidad urbana', 'Total AGEB urbana']
 CENSO_2020_USE = CENSO_2020.query("NOM_LOC != @Values")
@@ -99,7 +99,7 @@ CENSO_2020_USE.head(2)
 > Dentro de la base de datos existe la presencia de filas donde los valores son simbolos o caracteres especiales(*, N/D, 99999, etc), por lo que es necesario remplazarlos por valores NAN.
 
 ```{python}
-#| eval: false
+#| eval: true
 CENSO_2020_USE = CENSO_2020_USE.replace({'999999999': np.nan, 
                                          '99999999': np.nan,
                                          '*': np.nan,
@@ -118,7 +118,7 @@ CENSO_2020_USE[DIM_TEXT] = CENSO_2020_USE[DIM_TEXT].astype(str)
 
 
 ```{python}
-#| eval: false
+#| eval: true
 ## Corrección de información
 CENSO_2020_USE['ENTIDAD'] = CENSO_2020_USE['ENTIDAD'].str.zfill(2)
 CENSO_2020_USE['MUN'] = CENSO_2020_USE['MUN'].str.zfill(3)
@@ -146,7 +146,7 @@ CENSO_2020_USE.head(2)
 
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Se carga el archivo espacial de Manzanas
 
 MANZA_CDMX = gpd.read_file(Entradas +'MANZA_CDMX.json')
@@ -158,7 +158,7 @@ MANZA_CDMX.head(2)
 
 
 ```{python}
-#| eval: false
+#| eval: true
 
 ### Union a la izquierda con campo llave primaria "CVEGEO"
 MERGE = MANZA_CDMX.merge( CENSO_2020_USE,
@@ -171,7 +171,7 @@ MERGE.head(2)
 > Siempre es importante saber en que sistema de proyección se encuentran nuestros datos, para eso usamos "crs"
 
 ```{python}
-#| eval: false
+#| eval: true
 MERGE.crs
 ```
 
@@ -179,7 +179,7 @@ MERGE.crs
 > Hacemos un mapa por que nos gustan los mapitas.
 
 ```{python}
-#| eval: false
+#| eval: true
 fig, ax = plt.subplots(figsize=(8, 8))
 ax = MERGE.plot(ax = ax, column='P_15A24_M',
                 legend=False,
@@ -203,7 +203,7 @@ plt.show()
 > Se cargan las colonias y se valida que ambos crs se encuentren en metros "6362 o 6362" , en caso contrario es necesrio llevar a cabo una reproyección.
 
 ```{python}
-#| eval: false
+#| eval: true
 COLONIAS_CDMX = gpd.read_file(Entradas +'COLONIAS.json')
 print("Colonias CRS", COLONIAS_CDMX.crs)
 print("Manzanas CRS", MERGE.crs)
@@ -212,7 +212,7 @@ print("Manzanas CRS", MERGE.crs)
 > Los archivos estan en coordenadas geograficas, por lo que se reproyecta
 
 ```{python}
-#| eval: false
+#| eval: true
 MANZANA_METROS = MERGE.to_crs(6362)
 COLONIAS_METROS = COLONIAS_CDMX.to_crs(6362)
 
@@ -224,7 +224,7 @@ print("Crs Colonias", COLONIAS_METROS.crs )
 > Buscamos en este punto identificar la intersección entre colonias y manzanas para asignar a cada manzana (base al criterio de área maxima) la clave de la colonia a la que pertence.
 
 ```{python}
-#| eval: false
+#| eval: true
 INTERSECCION = gpd.overlay(COLONIAS_METROS,
                            MANZANA_METROS,
                             how = 'intersection')
@@ -234,7 +234,7 @@ INTERSECCION = gpd.overlay(COLONIAS_METROS,
 > Se calcula el valor de área para cada poligono intersectado
 
 ```{python}
-#| eval: false
+#| eval: true
 ## Se calcula el area 
 INTERSECCION['area'] = INTERSECCION.geometry.area
 ```
@@ -242,7 +242,7 @@ INTERSECCION['area'] = INTERSECCION.geometry.area
 > Para el overlay se reordena la información del área de manera descendente y se eliminan los duplicados con base a la "CVEGEO" manteniendo unicamente el primer valor
 
 ```{python}
-#| eval: false
+#| eval: true
 INTERSECCION = (INTERSECCION.sort_values('area', ascending = False).
                 drop_duplicates(subset="CVEGEO", keep = 'first').
                 drop(['geometry','area'], axis = 1))
@@ -255,7 +255,7 @@ INTERSECCION_USE = INTERSECCION.drop(['ENT', 'CVEDT', 'NOMDT', 'DTTOLOC'], axis 
 > En la base de colonias se identificaron caracteres especiales, por lo que se procede a remplazarlos, por su valor correspondiente.
 
 ```{python}
-#| eval: false
+#| eval: true
 
 Dic_Ca = {'Ã‘': 'Ñ'}
 INTERSECCION_USE.replace(Dic_Ca, inplace=True, regex=True)
@@ -269,7 +269,7 @@ INTERSECCION_USE.shape
 > Se une la información de overly de las Manzanas ya alineadas con colonias en la geometry de las manzanas para tener la base final. En la base final podemos observar la información a nivel: manzana, colonia y alcaldia, donde esta ultima se extraer en razon directa de la informacion contenida en la base de manzanas.
 
 ```{python}
-#| eval: false
+#| eval: true
 DATA_FINAL_USE = MANZA_CDMX.merge(INTERSECCION_USE,
                           left_on = 'CVEGEO',
                           right_on = 'CVEGEO',
@@ -294,7 +294,7 @@ DATA_FINAL_USE.CVEGEO.value_counts()
 > La relacion de muchas manzanas a una colonia, se valida para cada clave de colonias se repite tantas veces existan manzanas
 
 ```{python}
-#| eval: false
+#| eval: true
 DATA_FINAL_USE.CVE_COL.value_counts()
 ```
 
@@ -302,7 +302,7 @@ DATA_FINAL_USE.CVE_COL.value_counts()
 > Aqui validamos como las claves de las manzanas son diferentes para una misma colonia y se entiende la relacion, muchas manzanas a una colonia
 
 ```{python}
-#| eval: false
+#| eval: true
 DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
 ```
 
@@ -320,7 +320,7 @@ $$ Alcaldia \to Colonia \to Manzana $$
 > Reordenamiento de la información
 
 ```{python}
-#| eval: false
+#| eval: true
 DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC',
                                'ID_COL','CVE_COL', 'NOM_COL', 'AGEB', 'MZA',
                                'POBTOT', 'PSINDER', 'PROM_OCUP', 'P3YM_HLI', 'P_15A24_M',
@@ -332,7 +332,7 @@ DATA_FIN_USE.head(3)
 > Hacemos un mapita porque nos gustan los mapitas 
 
 ```{python}
-#| eval: false
+#| eval: true
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax = DATA_FIN_USE.plot(ax = ax, column='P_15A24_M',
@@ -357,7 +357,7 @@ plt.show()
 > Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por "PCA"
 
 ```{python}
-#| eval: false
+#| eval: true
 COLONIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['CVE_COL']).agg({'POBTOT': 'sum', 
                                                                   'PSINDER':'sum',
                                                                   'PROM_OCUP': 'mean',
@@ -377,7 +377,7 @@ $$ Z = \frac{x - \mu}{\sigma} $$
 > Para calcular la componente principal, separamos nuestra base de datos con el fin de tener las dimensiones que contruyen el índice.
 
 ```{python}
-#| eval: false
+#| eval: true
 
 ### Hacemos un copia por si necesitamos un proceso con la base original
 PCA_COLONIAS = COLONIA_PCA.copy()
@@ -392,7 +392,7 @@ PCA_y = PCA_COLONIAS[['CVE_COL']]
 > Se normaliza la informacion por Z-Score, determinamos el número de componentes y aplicamos la función para calcular
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Se normaliza la informacion por Z-Score
 
 S_TRANSF = StandardScaler()
@@ -407,7 +407,7 @@ PCA_COMPONENTE = PCA_N.fit_transform(PCA_X_SCALER)
 
 > Se calcula la varianza total por respecto al numero de componentes
 ```{python}
-#| eval: false
+#| eval: true
 ### Se calcula la varianza total por respecto al numero de componentes
 VARIANZA_TOTA = PCA_N.explained_variance_ratio_.sum() * 100
 print("\n Total de la variancia explicada \n", round(VARIANZA_TOTA,3), "%")
@@ -419,7 +419,7 @@ print("\n Total de la variancia explicada \n", round(VARIANZA_TOTA,3), "%")
 > finalmente se indexan los resultados a la base de datos como una nueva columna con clave DIS_COL = concentrated disadvantage component 
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Pegamos los valores de PCA en la base de datos
 PCA_COLONIAS['DIS_COL'] = PCA_COMPONENTE
 PCA_COLONIAS.head(5)
@@ -431,7 +431,7 @@ Lo anterior lo transformamos a una funcion para optimizar el proceso de trabajo.
 :::
 
 ```{python}
-#| eval: false
+#| eval: true
 
 def CONC_DIS (TABLA, DIM_CLAVE, DIM_POBLA):
     
@@ -472,7 +472,7 @@ def CONC_DIS (TABLA, DIM_CLAVE, DIM_POBLA):
 > Podemos usar la función creada y aplicarla en los datos para revalidar los resultados.
 
 ```{python}
-#| eval: false
+#| eval: true
 
 ### Revalidación de información
 
@@ -485,7 +485,7 @@ DESVE_COL.head(2)
 > El Agrupamiento de datos por nivel Alcaldia para "PCA". Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()
 
 ```{python}
-#| eval: false
+#| eval: true
 ALCALDIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['MUN']).agg({'POBTOT': 'sum', 
                                                                   'PSINDER':'sum',
                                                                   'PROM_OCUP': 'mean',
@@ -497,7 +497,7 @@ ALCALDIA_PCA.head(2)
 > Aplicamos la funcion creada con anterioridad
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Aplicando la función creada arriba
 
 DESVE_ALCA = CONC_DIS (ALCALDIA_PCA, 'MUN','POBTOT')
@@ -508,7 +508,7 @@ DESVE_ALCA.head(2)
 > En este punto, podemos unir toda la información a la tabla original y renombramos las columnas de desventajas en cada nivel
 
 ```{python}
-#| eval: false
+#| eval: true
 MERGE_DESVENTAJAS = DATA_FIN_USE.merge(DESVE_COL, 
                                        left_on = 'CVE_COL', 
                                        right_on = 'CVE_COL', 
@@ -523,7 +523,7 @@ MERGE_DESVENTAJAS.head(2)
 > Hacemos un mapita nuevamente
 
 ```{python}
-#| eval: false
+#| eval: true
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax = MERGE_DESVENTAJAS.plot(ax = ax, column='DIS_COL',
@@ -540,7 +540,7 @@ plt.show()
 ```
 
 ```{python}
-#| eval: false
+#| eval: true
 
 fig, ax = plt.subplots(figsize=(8, 8))
 ax = MERGE_DESVENTAJAS.plot(ax = ax, column='DIS_MUN',
@@ -601,7 +601,7 @@ Markdown(tabulate(
 > Se cargan las bases de datos correspondientes a los semestres del añp 2021 y se concatenan a un solo dataframe para tener todos los meses
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Llamadas del 911 
 LL_911_s1 =  pd.read_csv('llamadas_911_2021_s1.csv', encoding = 'Latin-1')
 LL_911_s2 =  pd.read_csv('llamadas_911_2021_s2.csv', encoding = 'Latin-1')
@@ -614,7 +614,7 @@ All_Data = pd.concat(Frame_C)
 > Validamos que se encuentren los doce meses en la columna "mes_cierre". En este punto surgen dudas, ¿se eliminan los folios repetidos o se mantienen?
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Validación de meses
 All_Data.mes_cierre.value_counts()
 ```
@@ -622,7 +622,7 @@ All_Data.mes_cierre.value_counts()
 > Con la validación de la información, seleccionamos unicamente de la dimension "incidente_c4" las clases con las que trabajaremos. De igual manera, se simplifica la descripción de las clases, se resetea el index para comenzar desde cero, seleccionamos unicamente las dimensiones que usaremos para los demas procesos (folio, categoria_incidente_c4, incidente_c4, manzana, latitud, longitud) y renombramos los campos necesarios.
 
 ```{python}
-#| eval: false
+#| eval: true
 #|
 ### Seleeción los valores de la dimension como una lista
 Lista = ["Drogados", "Ebrios" , "Persona en riesgo", "Escandalo", "Fiestas" , "Tirar basura en via publica",
@@ -671,7 +671,7 @@ CVEGEO = "0900700000000000"
 
 
 ```{python}
-#| eval: false
+#| eval: true
 #| 
 ## Transformación de string to float 
 Manza_Num = pd.DataFrame(pd.to_numeric(All_Data_filtered['manzana'], errors = 'coerce'))
@@ -696,11 +696,12 @@ Manza_Num.shape
 
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Union entre tablas
 USO_MANZAS = All_Data_filtered.merge(Manza_Num,
                                      left_index = True,
                                      right_index = True)
+USO_MANZAS.head(3)                                   
 ```
 
 
@@ -713,7 +714,7 @@ USO_MANZAS = All_Data_filtered.merge(Manza_Num,
 > Con base a las reglas se configura la función:
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Creamos una función
 def manzan_a(C):
     if ((C.manzana_x == C.manzana_x) & (C.manzana_y == C.manzana_y)):
@@ -727,7 +728,7 @@ def manzan_a(C):
 > Se aplica la funcion y se eliminan las dimensiones no necesarias 
 
 ```{python}
-#| eval: false
+#| eval: true
 #| 
 ### Aplicamos la función
 USO_MANZAS['CVEGEO'] = USO_MANZAS.apply(manzan_a, axis = 1)
@@ -736,6 +737,7 @@ USO_MANZAS['CVEGEO'] = USO_MANZAS.apply(manzan_a, axis = 1)
 
 USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
 
+USO_MANZAS.head(3)
 ```
 
 ### Caso por Mananzas y Manzanas
@@ -745,7 +747,7 @@ USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
 > Para contabilizar las clases en la columna haremos uso de un dataframe dummy
 
 ```{python}
-#| eval: false
+#| eval: true
 
 ### Se eliminan columnas no necesarias
 
@@ -757,13 +759,15 @@ USO_MANZAS_TRUE = USO_MANZAS.drop(['latitud','longitud'], axis = 1)
 USO_MANZAS_TRUE_DMY = pd.get_dummies(USO_MANZAS_TRUE, 
                                      columns=["Incidente"], 
                                      prefix=["DM"])
+
+USO_MANZAS_TRUE_DMY.head(3)
 ```
 
 
 > Ahora que tenemos nuestro dataframe dummy podemos contar, para lograr eso, tenemos que agrupar y sumar los eventos
 
 ```{python}
-#| eval: false
+#| eval: true
 ### Agrupación de dataframe Dummy
 
 MANZANA_DUMMMY = pd.DataFrame(USO_MANZAS_TRUE_DMY.groupby(['CVEGEO']).agg({'DM_AGUA_N': 'sum', 
@@ -779,17 +783,18 @@ MANZANA_DUMMMY = pd.DataFrame(USO_MANZAS_TRUE_DMY.groupby(['CVEGEO']).agg({'DM_A
                                                                            'DM_PERSO_R': 'sum',
                                                                            'DM_VEHICULO': 'sum'
                                                                           }).reset_index())
+MANZANA_DUMMMY.head(3)                                                           
 ```
 
 > Ahora haremos oitra union y seleccionaremos aquellos elementos para crear el Desorden Social y fisico. Se unen la tabla DATA_FIN_USE y MANZANA_DUMMMY. Esto se hace en esa tabla porque debemos recordar que las manzanas tienen su asignacion de clave de colonias y alcaldias con base al criterio de maxima área.
 
 ```{python}
-#| eval: false
+#| eval: true
 
 ### Union de tablas 
 SOCIAL_FISICO = DATA_FIN_USE.merge(MANZANA_DUMMMY,
                                    left_on = 'CVEGEO',
                                    right_on = 'CVEGEO',
                                    how = 'left')
-
+SOCIAL_FISICO.head(3)
 ```

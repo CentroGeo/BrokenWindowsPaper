@@ -123,6 +123,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
     "search-submit-button-title": "Submit"
   }
 }</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
@@ -316,6 +319,69 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>                          <span class="st">'PROM_OCUP'</span>, <span class="st">'P3YM_HLI'</span>]]</span>
 <span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>CENSO_2020.head(<span class="dv">2</span>)                          </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="4">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>ENTIDAD</th>
+      <th>NOM_ENT</th>
+      <th>MUN</th>
+      <th>NOM_MUN</th>
+      <th>LOC</th>
+      <th>NOM_LOC</th>
+      <th>AGEB</th>
+      <th>MZA</th>
+      <th>POBTOT</th>
+      <th>P_15A17_M</th>
+      <th>P_18A24_M</th>
+      <th>PSINDER</th>
+      <th>PROM_OCUP</th>
+      <th>P3YM_HLI</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>9</td>
+      <td>Ciudad de México</td>
+      <td>0</td>
+      <td>Total de la entidad Ciudad de México</td>
+      <td>0</td>
+      <td>Total de la entidad</td>
+      <td>0</td>
+      <td>0</td>
+      <td>9209944</td>
+      <td>193870</td>
+      <td>496288</td>
+      <td>2502789</td>
+      <td>3.32</td>
+      <td>125153</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>9</td>
+      <td>Ciudad de México</td>
+      <td>2</td>
+      <td>Azcapotzalco</td>
+      <td>0</td>
+      <td>Total del municipio</td>
+      <td>0</td>
+      <td>0</td>
+      <td>432205</td>
+      <td>8382</td>
+      <td>21785</td>
+      <td>90370</td>
+      <td>3.21</td>
+      <td>3208</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
 </div>
 <blockquote class="blockquote">
 <p>De la base de datos filtramos eliminando las filas que contienen los totales</p>
@@ -761,7 +827,7 @@ Impotante
 <p>Las dimensiones que se han de usar son las siguientes</p>
 </blockquote>
 <div class="cell" data-execution_count="36">
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="5">
 <table class="table table-sm table-striped">
 <caption>Desorden Social </caption>
 <thead>
@@ -808,7 +874,7 @@ Impotante
 </div>
 </div>
 <div class="cell" data-execution_count="37">
-<div class="cell-output cell-output-display" data-execution_count="3">
+<div class="cell-output cell-output-display" data-execution_count="6">
 <table class="table table-sm table-striped">
 <caption>Desorden Físico </caption>
 <thead>
