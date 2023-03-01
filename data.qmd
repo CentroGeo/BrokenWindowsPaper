@@ -11,7 +11,9 @@ format: html
 
 [Llamadas del 911](https://datos.cdmx.gob.mx/dataset/llamadas-numero-de-atencion-a-emergencias-911)
 
-# Concentración de desventajas
+# Preprocessing
+
+## Concentración de desventajas
 
 Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son:
 - Porcentaje de masculinos de 15 a 29
@@ -346,11 +348,11 @@ ax.set_axis_off()
 plt.show()
 ```
 
-## Análisis de Componentes Principales (PCA)
+### Análisis de Componentes Principales (PCA)
 
 >En esta sección se cálcula el indice de **_Concetración de desventajas_** mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel **Alcaldias y Delegaciones**. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.
 
-### NIVEL COLONIAS
+### Nivel Colonias
 
 > Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por "PCA"
 
@@ -478,7 +480,7 @@ DESVE_COL = CONC_DIS (COLONIA_PCA, 'CVE_COL','POBTOT')
 DESVE_COL.head(2)
 ```
 
-### NIVEL ALCALIDAS
+### Nivel Alcaldias
 
 > El Agrupamiento de datos por nivel Alcaldia para "PCA". Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()
 
@@ -596,25 +598,198 @@ Markdown(tabulate(
 ```
 
 
-## Desorden Social
-
 > Se cargan las bases de datos correspondientes a los semestres del añp 2021 y se concatenan a un solo dataframe para tener todos los meses
 
 ```{python}
 #| eval: false
+### Llamadas del 911 
 LL_911_s1 =  pd.read_csv('llamadas_911_2021_s1.csv', encoding = 'Latin-1')
 LL_911_s2 =  pd.read_csv('llamadas_911_2021_s2.csv', encoding = 'Latin-1')
 
-### Concatenaciones
+### Concatenaciones de semestres
 Frame_C = [LL_911_s1, LL_911_s2]
 All_Data = pd.concat(Frame_C)
 ```
 
-> Validamos que esten todos los meses en la columna "mes_cierre"
+> Validamos que se encuentren los doce meses en la columna "mes_cierre". En este punto surgen dudas, ¿se eliminan los folios repetidos o se mantienen?
 
 ```{python}
 #| eval: false
+### Validación de meses
 All_Data.mes_cierre.value_counts()
 ```
 
+> Con la validación de la información, seleccionamos unicamente de la dimension "incidente_c4" las clases con las que trabajaremos. De igual manera, se simplifica la descripción de las clases, se resetea el index para comenzar desde cero, seleccionamos unicamente las dimensiones que usaremos para los demas procesos (folio, categoria_incidente_c4, incidente_c4, manzana, latitud, longitud) y renombramos los campos necesarios.
 
+```{python}
+#| eval: false
+#|
+### Seleeción los valores de la dimension como una lista
+Lista = ["Drogados", "Ebrios" , "Persona en riesgo", "Escandalo", "Fiestas" , "Tirar basura en via publica",
+         "Vehiculo", "Grafitis", "Agua potable", "Aguas negras", "Corto circuito instalacion o subestacion electrica", "Fuga de gas natural"]
+
+All_Data_filtered = All_Data[All_Data['incidente_c4'].isin(Lista)]
+
+All_Data_filtered = All_Data_filtered.replace({'Fiestas':'FIESTA','Escandalo':'ESCANDALO','Ebrios':'EBRIO',
+                                              'Agua potable':'AGUA_P','Drogados':'DROGADO','Vehiculo':'VEHICULO',
+                                              'Grafitis':'GRAFITI','Persona en riesgo':'PERSO_R',
+                                              'Aguas negras':'AGUA_N', 'Tirar basura en via publica':'BASURA_P',
+                                              'Corto circuito instalacion o subestacion electrica':'CORTO_ELE',
+                                              'Fuga de gas natural':'FUGAS_N'}).reset_index(drop = True)
+
+All_Data_filtered = All_Data_filtered[["folio","categoria_incidente_c4","incidente_c4", 
+                                       "manzana","latitud","longitud"]].rename({"categoria_incidente_c4": "Categoria",
+                                                                                "incidente_c4": "Incidente"}, axis = 1)
+
+
+```
+
+
+## El jardín de las bifurcaciones
+
+> En esta seccion usaremos para calcular los valores de desorden social y fisico, usaremos dos formas: las claves de las manzanas y las coordenadas geograficas a fin de comparar resultados.
+
+
+### Corrección columna clave de manzana
+
+> Inicialmente notamos de nuestra base de datos las columnas manzana, longitud y latitud. Para la primer bifurcación usaremos las claves de manzanas que se encuentran asignadas. Al hacer esto nos damos cuenta que necesitamos una limpieza de datos. Lo anterior por:
+
+1. El tipo de dato es string esta en su forma es cientifico, 
+2. Tenemos que transformar los string a numeros aplicando la funcion "to_numeric" 
+3. Se extiende el numero de su forma cientifica a su forma natural
+4. Los elementos con caracteres alfanumericos se asignan como "NAN". 
+
+> En este punto podemos notar que ya tenemos el string cientifico en "float", lo que tenemos que hacer es extraer el numero sin notación cientifica, para eso aplicamos una funcion "lamnda" que convierta el float en string sin notación cientifica y los "nan_text" sean remplazamos por "NAN" verdaderos.
+
+::: {.callout-important icon=false}
+## Impotante
+Recordar que las claves comienzan con un cero y que el total de caracteres para manzanas son 16.
+
+CVEGEO = "0900700000000000" 
+:::
+
+
+
+```{python}
+#| eval: false
+#| 
+## Transformación de string to float 
+Manza_Num = pd.DataFrame(pd.to_numeric(All_Data_filtered['manzana'], errors = 'coerce'))
+
+## Se extiende el numero a su forma natural
+Manza_Num = pd.DataFrame(Manza_Num['manzana'].apply(lambda x: '%.0f' %x)).replace('nan', np.nan)
+
+### Recordando que las claves comienzan con un cero y que para manzanas es un total de 16 caracteres
+### Asignamos el cero
+
+Manza_Num['manzana'] = Manza_Num['manzana'].str.zfill(16)
+
+Manza_Num.shape
+
+```
+
+> Ya tenemos un dataframe con las claves en string y los indices como campo llave primaria con NAN verdaderos
+
+> Ahora vamos a hacer una union entre estos resultados y los el dataframe filtrado (All_Data_filtered) con base a su indice. Al ser un merge por indices, es recomendable que este este reiniciado (por lo que se entiende la necesidad de su reinicio en procesos anteriores). 
+
+> De la union tendremos dos columnas con claves manzanas, las cuales las usaremos en una función para asignnación de clave corregida
+
+
+```{python}
+#| eval: false
+### Union entre tablas
+USO_MANZAS = All_Data_filtered.merge(Manza_Num,
+                                     left_index = True,
+                                     right_index = True)
+```
+
+
+>La **asignacion de clave correcta:** se lleva a cabo considerando las combianciones de resultados posibles entre las dos columnas de nombre manzanas (x,y). De lo anterior se obtienen las siguientes reglas de negocios:
+
+1. Si manzana_x == manzana_x & manzana_y == manzana_y, entonces el valor sera manzana_y
+2. Si manzana_x == manzana_x & manzana_y != manzana_y, entonces el valor sera manzana_x
+3. Si ninguno de los dos anteriores se cumple se asigna NAN
+
+> Con base a las reglas se configura la función:
+
+```{python}
+#| eval: false
+### Creamos una función
+def manzan_a(C):
+    if ((C.manzana_x == C.manzana_x) & (C.manzana_y == C.manzana_y)):
+        return C.manzana_y
+    elif ((C.manzana_x == C.manzana_x) & (C.manzana_y != C.manzana_y)):
+        return C.manzana_x
+    else:
+        return np.nan
+```
+
+> Se aplica la funcion y se eliminan las dimensiones no necesarias 
+
+```{python}
+#| eval: false
+#| 
+### Aplicamos la función
+USO_MANZAS['CVEGEO'] = USO_MANZAS.apply(manzan_a, axis = 1)
+
+## Eliminamos las dimensiones no necesarias y tenemos la tabla de inicio
+
+USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
+
+```
+
+### Caso por Mananzas y Manzanas
+
+> Para este caso, vamos a contar cuantos eventos de una determinada clase en el tipo de incidentes estan inmersos en las manzanas. Para la forma con columna y claves manzanas, seleccionamos unicamente las columnas de trabajo, en este caso se eliminan longitud y latitud.
+
+> Para contabilizar las clases en la columna haremos uso de un dataframe dummy
+
+```{python}
+#| eval: false
+
+### Se eliminan columnas no necesarias
+
+USO_MANZAS_TRUE = USO_MANZAS.drop(['latitud','longitud'], axis = 1)
+
+### Para contabilizar, notamos que la descripcion del incidente esta en fila,
+### por lo que tenemos que crear un dataframe dummy
+
+USO_MANZAS_TRUE_DMY = pd.get_dummies(USO_MANZAS_TRUE, 
+                                     columns=["Incidente"], 
+                                     prefix=["DM"])
+```
+
+
+> Ahora que tenemos nuestro dataframe dummy podemos contar, para lograr eso, tenemos que agrupar y sumar los eventos
+
+```{python}
+#| eval: false
+### Agrupación de dataframe Dummy
+
+MANZANA_DUMMMY = pd.DataFrame(USO_MANZAS_TRUE_DMY.groupby(['CVEGEO']).agg({'DM_AGUA_N': 'sum', 
+                                                                           'DM_AGUA_P': 'sum',
+                                                                           'DM_BASURA_P': 'sum',
+                                                                           'DM_CORTO_ELE': 'sum',
+                                                                           'DM_DROGADO': 'sum',
+                                                                           'DM_EBRIO': 'sum',
+                                                                           'DM_ESCANDALO': 'sum',
+                                                                           'DM_FIESTA': 'sum',
+                                                                           'DM_FUGAS_N': 'sum',
+                                                                           'DM_GRAFITI': 'sum',
+                                                                           'DM_PERSO_R': 'sum',
+                                                                           'DM_VEHICULO': 'sum'
+                                                                          }).reset_index())
+```
+
+> Ahora haremos oitra union y seleccionaremos aquellos elementos para crear el Desorden Social y fisico. Se unen la tabla DATA_FIN_USE y MANZANA_DUMMMY. Esto se hace en esa tabla porque debemos recordar que las manzanas tienen su asignacion de clave de colonias y alcaldias con base al criterio de maxima área.
+
+```{python}
+#| eval: false
+
+### Union de tablas 
+SOCIAL_FISICO = DATA_FIN_USE.merge(MANZANA_DUMMMY,
+                                   left_on = 'CVEGEO',
+                                   right_on = 'CVEGEO',
+                                   how = 'left')
+
+```
