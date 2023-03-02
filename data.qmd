@@ -722,7 +722,7 @@ USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
 USO_MANZAS.head(3)
 ```
 
-### Caso por Mananzas y Manzanas
+### **Caso por Mananzas y Clave Manzanas**
 
 > Para este caso, vamos a contar cuantos eventos de una determinada clase en el tipo de incidentes estan inmersos en las manzanas. Para la forma con columna y claves manzanas, seleccionamos unicamente las columnas de trabajo, en este caso se eliminan longitud y latitud.
 
