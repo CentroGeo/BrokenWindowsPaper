@@ -329,24 +329,7 @@ DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NO
 DATA_FIN_USE.head(3)
 ```
 
-> Hacemos un mapita porque nos gustan los mapitas 
 
-```{python}
-#| eval: true
-
-fig, ax = plt.subplots(figsize=(8, 8))
-ax = DATA_FIN_USE.plot(ax = ax, column='P_15A24_M',
-                       legend= False,
-                       alpha=0.8,
-                       scheme='NaturalBreaks',
-                       cmap='copper',
-                       classification_kwds={'k':6})
-ax.set(title='Población Masculina 15 a 24 años, Ciudad de México')
-
-ax.set_axis_off()
-
-plt.show()
-```
 
 ### Análisis de Componentes Principales (PCA)
 
