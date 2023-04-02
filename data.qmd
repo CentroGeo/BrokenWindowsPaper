@@ -918,7 +918,7 @@ DESVE_COL
 
 > En este punto tenemos listas nuestras bases de datos a nivel colonia y alcaldia con las varibles de concentración de desventajas, Desorden Social y Desorden Físico.
 
-> A modo de resguardo, exportaremos esta información
+> A modo de resguardo, exportaremos esta información.
 
 ```{python}
 #| eval: true
