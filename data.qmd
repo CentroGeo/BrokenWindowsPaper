@@ -405,6 +405,7 @@ DESVE_COL = CONC_DIS (COLONIA_PCA, 'CVE_COL', 'DIS_COL')
 DESVE_COL.head(2)
 ```
 
+### Nivel Alcaldias
 
 > El Agrupamiento de datos por nivel Alcaldia para "PCA". Recordando que la clave de Alcaldia == Municipio la podemos observar de la forma: DATA_FIN_USE.NOM_MUN.value_counts()
 
@@ -569,8 +570,6 @@ All_Data.head(2)
 
 ```
 
-
-## Desorden social y fisico
 
 > En esta seccion para calcular los valores de desorden social y fisico, nos centraremos en usar la información de la columna "manzana" de las llamadas para unir con la base donde de desventajas y tener la informacion a nivel Alcaldia.
 
@@ -779,12 +778,12 @@ DESVE_ALCA
 ```
 
 
-### Desorden Social y Fisico a nivel Colonia
+### **Desorden Social y Fisico a nivel Colonia**
 
 > Para este caso y al contar con la geometria de las colonias previamente usada, contaremos el total de eventos de cada una de las clases en las colonias. Para eso necesitamos inicialmente que nuestra base de datos sea espacializada, es decir que cuente con una columna de geometria espacial
 
 
-### **Caso por Mananzas y Puntos Geom**
+### Caso por Mananzas y Puntos Geom
 
 > Comenzamos usando la tabla que habiamos creado con anterioridad, aquella donde se hicieron las correciones a la clave manzanada (USO_MANZAS). De la tabla  se crean las geometrias las cuales necesitan tener definido un sistema de proyección.
 
