@@ -211,16 +211,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   </ul></li>
   <li><a href="#desorden-social-y-físico" id="toc-desorden-social-y-físico" class="nav-link" data-scroll-target="#desorden-social-y-físico"><span class="toc-section-number">5</span>  Desorden Social y Físico</a>
   <ul class="collapse">
-  <li><a href="#desorden-social-y-fisico" id="toc-desorden-social-y-fisico" class="nav-link" data-scroll-target="#desorden-social-y-fisico"><span class="toc-section-number">5.1</span>  Desorden social y fisico</a>
-  <ul class="collapse">
-  <li><a href="#corrección-columna-clave-de-manzana" id="toc-corrección-columna-clave-de-manzana" class="nav-link" data-scroll-target="#corrección-columna-clave-de-manzana"><span class="toc-section-number">5.1.1</span>  Corrección columna clave de manzana</a></li>
-  <li><a href="#conteo-de-eventos" id="toc-conteo-de-eventos" class="nav-link" data-scroll-target="#conteo-de-eventos"><span class="toc-section-number">5.1.2</span>  <strong>Conteo de eventos</strong></a></li>
-  <li><a href="#desorden-social-y-fisico-a-nivel-alcaldia" id="toc-desorden-social-y-fisico-a-nivel-alcaldia" class="nav-link" data-scroll-target="#desorden-social-y-fisico-a-nivel-alcaldia"><span class="toc-section-number">5.1.3</span>  Desorden Social y Fisico a nivel Alcaldia</a></li>
-  <li><a href="#desorden-social-y-fisico-a-nivel-colonia" id="toc-desorden-social-y-fisico-a-nivel-colonia" class="nav-link" data-scroll-target="#desorden-social-y-fisico-a-nivel-colonia"><span class="toc-section-number">5.1.4</span>  <strong>Desorden Social y Fisico a nivel Colonia</strong></a></li>
-  <li><a href="#caso-por-mananzas-y-puntos-geom" id="toc-caso-por-mananzas-y-puntos-geom" class="nav-link" data-scroll-target="#caso-por-mananzas-y-puntos-geom"><span class="toc-section-number">5.1.5</span>  Caso por Mananzas y Puntos Geom</a></li>
-  <li><a href="#contabilizando-los-puntos-dentro-de-poligonos" id="toc-contabilizando-los-puntos-dentro-de-poligonos" class="nav-link" data-scroll-target="#contabilizando-los-puntos-dentro-de-poligonos"><span class="toc-section-number">5.1.6</span>  Contabilizando los puntos dentro de poligonos</a></li>
-  <li><a href="#calculo-de-indices" id="toc-calculo-de-indices" class="nav-link" data-scroll-target="#calculo-de-indices"><span class="toc-section-number">5.1.7</span>  Calculo de indices</a></li>
-  </ul></li>
+  <li><a href="#corrección-columna-clave-de-manzana" id="toc-corrección-columna-clave-de-manzana" class="nav-link" data-scroll-target="#corrección-columna-clave-de-manzana"><span class="toc-section-number">5.0.1</span>  Corrección columna clave de manzana</a></li>
+  <li><a href="#conteo-de-eventos" id="toc-conteo-de-eventos" class="nav-link" data-scroll-target="#conteo-de-eventos"><span class="toc-section-number">5.0.2</span>  <strong>Conteo de eventos</strong></a></li>
+  <li><a href="#desorden-social-y-fisico-a-nivel-alcaldia" id="toc-desorden-social-y-fisico-a-nivel-alcaldia" class="nav-link" data-scroll-target="#desorden-social-y-fisico-a-nivel-alcaldia"><span class="toc-section-number">5.0.3</span>  Desorden Social y Fisico a nivel Alcaldia</a></li>
+  <li><a href="#desorden-social-y-fisico-a-nivel-colonia" id="toc-desorden-social-y-fisico-a-nivel-colonia" class="nav-link" data-scroll-target="#desorden-social-y-fisico-a-nivel-colonia"><span class="toc-section-number">5.0.4</span>  <strong>Desorden Social y Fisico a nivel Colonia</strong></a></li>
+  <li><a href="#caso-por-mananzas-y-puntos-geom" id="toc-caso-por-mananzas-y-puntos-geom" class="nav-link" data-scroll-target="#caso-por-mananzas-y-puntos-geom"><span class="toc-section-number">5.0.5</span>  Caso por Mananzas y Puntos Geom</a></li>
+  <li><a href="#contabilizando-los-puntos-dentro-de-poligonos" id="toc-contabilizando-los-puntos-dentro-de-poligonos" class="nav-link" data-scroll-target="#contabilizando-los-puntos-dentro-de-poligonos"><span class="toc-section-number">5.0.6</span>  Contabilizando los puntos dentro de poligonos</a></li>
+  <li><a href="#calculo-de-indices" id="toc-calculo-de-indices" class="nav-link" data-scroll-target="#calculo-de-indices"><span class="toc-section-number">5.0.7</span>  Calculo de indices</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -1541,13 +1538,11 @@ Name: mes_cierre, dtype: int64</code></pre>
 </div>
 </div>
 </div>
-<section id="desorden-social-y-fisico" class="level2" data-number="5.1">
-<h2 data-number="5.1" class="anchored" data-anchor-id="desorden-social-y-fisico"><span class="header-section-number">5.1</span> Desorden social y fisico</h2>
 <blockquote class="blockquote">
 <p>En esta seccion para calcular los valores de desorden social y fisico, nos centraremos en usar la información de la columna “manzana” de las llamadas para unir con la base donde de desventajas y tener la informacion a nivel Alcaldia.</p>
 </blockquote>
-<section id="corrección-columna-clave-de-manzana" class="level3" data-number="5.1.1">
-<h3 data-number="5.1.1" class="anchored" data-anchor-id="corrección-columna-clave-de-manzana"><span class="header-section-number">5.1.1</span> Corrección columna clave de manzana</h3>
+<section id="corrección-columna-clave-de-manzana" class="level3" data-number="5.0.1">
+<h3 data-number="5.0.1" class="anchored" data-anchor-id="corrección-columna-clave-de-manzana"><span class="header-section-number">5.0.1</span> Corrección columna clave de manzana</h3>
 <blockquote class="blockquote">
 <p>Las claves de manzanas que se encuentran asignadas necesitan un procedo de corrección y limpieza.</p>
 </blockquote>
@@ -1742,8 +1737,8 @@ Impotante
 </div>
 </div>
 </section>
-<section id="conteo-de-eventos" class="level3" data-number="5.1.2">
-<h3 data-number="5.1.2" class="anchored" data-anchor-id="conteo-de-eventos"><span class="header-section-number">5.1.2</span> <strong>Conteo de eventos</strong></h3>
+<section id="conteo-de-eventos" class="level3" data-number="5.0.2">
+<h3 data-number="5.0.2" class="anchored" data-anchor-id="conteo-de-eventos"><span class="header-section-number">5.0.2</span> <strong>Conteo de eventos</strong></h3>
 <blockquote class="blockquote">
 <p>Ahora vamos a contar los eventos de una determinada clase en el tipo de incidentes estan inmersos en las manzanas. Para la forma con columna y claves manzanas, seleccionamos unicamente las columnas de trabajo, en este caso se eliminan longitud y latitud.</p>
 </blockquote>
@@ -2039,8 +2034,8 @@ Impotante
 </div>
 </div>
 </section>
-<section id="desorden-social-y-fisico-a-nivel-alcaldia" class="level3" data-number="5.1.3">
-<h3 data-number="5.1.3" class="anchored" data-anchor-id="desorden-social-y-fisico-a-nivel-alcaldia"><span class="header-section-number">5.1.3</span> Desorden Social y Fisico a nivel Alcaldia</h3>
+<section id="desorden-social-y-fisico-a-nivel-alcaldia" class="level3" data-number="5.0.3">
+<h3 data-number="5.0.3" class="anchored" data-anchor-id="desorden-social-y-fisico-a-nivel-alcaldia"><span class="header-section-number">5.0.3</span> Desorden Social y Fisico a nivel Alcaldia</h3>
 <blockquote class="blockquote">
 <p>De la misma forma que se ejecuto codigo pasado, lo que necesitamos es el grupamiento de datos por nivel alcaldia para calcular la componente de Desorden Social por “PCA”</p>
 </blockquote>
@@ -2287,14 +2282,14 @@ Impotante
 </div>
 </div>
 </section>
-<section id="desorden-social-y-fisico-a-nivel-colonia" class="level3" data-number="5.1.4">
-<h3 data-number="5.1.4" class="anchored" data-anchor-id="desorden-social-y-fisico-a-nivel-colonia"><span class="header-section-number">5.1.4</span> <strong>Desorden Social y Fisico a nivel Colonia</strong></h3>
+<section id="desorden-social-y-fisico-a-nivel-colonia" class="level3" data-number="5.0.4">
+<h3 data-number="5.0.4" class="anchored" data-anchor-id="desorden-social-y-fisico-a-nivel-colonia"><span class="header-section-number">5.0.4</span> <strong>Desorden Social y Fisico a nivel Colonia</strong></h3>
 <blockquote class="blockquote">
 <p>Para este caso y al contar con la geometria de las colonias previamente usada, contaremos el total de eventos de cada una de las clases en las colonias. Para eso necesitamos inicialmente que nuestra base de datos sea espacializada, es decir que cuente con una columna de geometria espacial</p>
 </blockquote>
 </section>
-<section id="caso-por-mananzas-y-puntos-geom" class="level3" data-number="5.1.5">
-<h3 data-number="5.1.5" class="anchored" data-anchor-id="caso-por-mananzas-y-puntos-geom"><span class="header-section-number">5.1.5</span> Caso por Mananzas y Puntos Geom</h3>
+<section id="caso-por-mananzas-y-puntos-geom" class="level3" data-number="5.0.5">
+<h3 data-number="5.0.5" class="anchored" data-anchor-id="caso-por-mananzas-y-puntos-geom"><span class="header-section-number">5.0.5</span> Caso por Mananzas y Puntos Geom</h3>
 <blockquote class="blockquote">
 <p>Comenzamos usando la tabla que habiamos creado con anterioridad, aquella donde se hicieron las correciones a la clave manzanada (USO_MANZAS). De la tabla se crean las geometrias las cuales necesitan tener definido un sistema de proyección.</p>
 </blockquote>
@@ -2358,8 +2353,8 @@ epsg:6362</code></pre>
 <p>Ahora se van a contabilizar el número de clases de geometria punto dentro de las colonias de geometria poligonal, para que eso suceda, debemos hacer un join geoespacial.</p>
 </blockquote>
 </section>
-<section id="contabilizando-los-puntos-dentro-de-poligonos" class="level3" data-number="5.1.6">
-<h3 data-number="5.1.6" class="anchored" data-anchor-id="contabilizando-los-puntos-dentro-de-poligonos"><span class="header-section-number">5.1.6</span> Contabilizando los puntos dentro de poligonos</h3>
+<section id="contabilizando-los-puntos-dentro-de-poligonos" class="level3" data-number="5.0.6">
+<h3 data-number="5.0.6" class="anchored" data-anchor-id="contabilizando-los-puntos-dentro-de-poligonos"><span class="header-section-number">5.0.6</span> Contabilizando los puntos dentro de poligonos</h3>
 <div class="cell" data-execution_count="46">
 <div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Hacemos un join geoespacial de los puntos que se encuentran contenidos dentro del poligono</span></span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -2583,8 +2578,8 @@ Name: CVE_COL, Length: 1814, dtype: int64</code></pre>
 </div>
 </div>
 </section>
-<section id="calculo-de-indices" class="level3" data-number="5.1.7">
-<h3 data-number="5.1.7" class="anchored" data-anchor-id="calculo-de-indices"><span class="header-section-number">5.1.7</span> Calculo de indices</h3>
+<section id="calculo-de-indices" class="level3" data-number="5.0.7">
+<h3 data-number="5.0.7" class="anchored" data-anchor-id="calculo-de-indices"><span class="header-section-number">5.0.7</span> Calculo de indices</h3>
 <blockquote class="blockquote">
 <p>Para construirlo repetimos los procesos anteriores para agrupacion y aplicacion de la función.</p>
 </blockquote>
@@ -2917,7 +2912,6 @@ Name: CVE_COL, Length: 1814, dtype: int64</code></pre>
 </div>
 
 
-</section>
 </section>
 </section>
 

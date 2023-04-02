@@ -573,7 +573,7 @@ All_Data.head(2)
 
 > En esta seccion para calcular los valores de desorden social y fisico, nos centraremos en usar la información de la columna "manzana" de las llamadas para unir con la base donde de desventajas y tener la informacion a nivel Alcaldia.
 
-### Corrección columna clave de manzana
+## Corrección columna clave de manzana
 
 > Las claves de manzanas que se encuentran asignadas necesitan un procedo de corrección y limpieza.
 
@@ -662,7 +662,7 @@ USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
 USO_MANZAS.head(3)
 ```
 
-### **Conteo de eventos**
+## **Conteo de eventos**
 
 > Ahora vamos a contar los eventos de una determinada clase en el tipo de incidentes estan inmersos en las manzanas. Para la forma con columna y claves manzanas, seleccionamos unicamente las columnas de trabajo, en este caso se eliminan longitud y latitud.
 
