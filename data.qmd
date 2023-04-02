@@ -895,7 +895,7 @@ FISICO_PNT_COL.head(2)
 ```
 
 
-> Ahora se unen los resultados de la concentración de desventajas con los resultados del desorden social y físico
+> Ahora se unen los resultados de la concentración de desventajas con los resultados del desorden social y físico.
 
 ```{python}
 #| eval: true
