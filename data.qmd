@@ -11,9 +11,7 @@ format: html
 
 [Llamadas del 911](https://datos.cdmx.gob.mx/dataset/llamadas-numero-de-atencion-a-emergencias-911)
 
-# Preprocessing
-
-## Concentración de desventajas
+# Índice de Concentración de desventajas
 
 Construido a partir de cuatro dimensiónes (con base a censo 2010) y reducidad a una componente principal por PCA. Las dimensiones que se exponen en el articulo son:
 - Porcentaje de masculinos de 15 a 29
@@ -324,7 +322,7 @@ DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
 
 
 
-## Análisis de Componentes Principales (PCA)
+# Análisis de Componentes Principales (PCA)
 
 >En esta sección se cálcula el indice de **_Concetración de desventajas_** mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel **Alcaldias y Delegaciones**. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.
 
@@ -481,7 +479,7 @@ plt.show()
 ```
 
 
-## Índice del Desorden Social y Físico
+# Índice del Desorden Social y Físico
 
 > En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres, para este caso se han usado las llamadas del primer y segundo semestre del 2021.
 
