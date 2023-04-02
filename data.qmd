@@ -861,7 +861,7 @@ MANZANA_911_DUMMMY.CVE_COL.value_counts()
 ```
 
 
-### Calculo de indices
+## Calculo de índices
 
 > Para construirlo repetimos los procesos anteriores para agrupacion y aplicacion de la función.
 
@@ -917,6 +917,9 @@ DESVE_COL = DESVE_COL.merge(SOCIAL_PNT_COL,
 DESVE_COL                             
 
 ```
+
+
+## Resultados Finales
 
 > Las base de datos finales son:
 
