@@ -923,9 +923,10 @@ DESVE_COL
 
 #### Información a nivel Colonia : Concentración de desventajas + Desorden Social + Desorden Físico
 
+DESVE_COL.to_csv(Entradas + "Variables_Colonias.csv", encoding = 'Latin-1', index = False)
+
 DESVE_COL.head(5)
 
-DESVE_COL.to_csv(Entradas + "Variables_Colonias.csv", encoding = 'Latin-1', index = False)
 
 ```
 
@@ -936,9 +937,10 @@ DESVE_COL.to_csv(Entradas + "Variables_Colonias.csv", encoding = 'Latin-1', inde
 
 #### Información a nivel Alcaldia : Concentración de desventajas + Desorden Social + Desorden Físico.
 
+DESVE_ALCA.to_csv(Entradas + "Variables_Alcaldia.csv", encoding = 'Latin-1', index = False)
+
 DESVE_ALCA.head(5)
 
-DESVE_ALCA.to_csv(Entradas + "Variables_Alcaldia.csv", encoding = 'Latin-1', index = False)
 
 ```
 
@@ -972,4 +974,15 @@ METRO_CDMX = METRO_CDMX[['CVE_EST','geometry']]
 METRO_CDMX.head(2)
 ```
 
-Ahora recordadnoq
+Ahora recordando la parte del join espacial procederemos a hacer uno con las estaciones del metro y las colonias, para porteriormente unir la informacion por clave de colonia con la base donde se encuentra toda la información y obtener asi el conteo por colonias y alcaldias.
+
+```{python}
+#| eval: true
+### Hacemos un join geoespacial de los puntos que se encuentran contenidos dentro del poligono
+
+METRO_CDMX = gpd.sjoin(COLONIAS_CDMX, 
+                        METRO_CDMX[['CVE_EST','geometry']], 
+                         how = "left", 
+                         op = 'contains')
+METRO_CDMX.head(2)
+```
