@@ -875,7 +875,7 @@ SOCIAL_PNT_COL = CONC_DIS(SOC_POINT_COL, 'CVE_COL','SOCIAL_COL')
 SOCIAL_PNT_COL.head(2)
 ```
 
-> **Desorden fisico**
+**Desorden fisico**
 
 > Para construirlo repetimos los procesos anteriores para agrupacion y aplicacion de la función.
 
