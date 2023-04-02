@@ -87,13 +87,21 @@ CENSO_2020.head(2)
 
 ```{python}
 #| eval: true
+CENSO_2020 =  pd.read_csv(Entradas + 'MANZANAS.csv', encoding = 'Latin-1')
+CENSO_2020 = CENSO_2020 [['ENTIDAD','NOM_ENT','MUN',
+                          'NOM_MUN','LOC','NOM_LOC',
+                          'AGEB','MZA','POBTOT', 
+                          'P_15A17_M','P_18A24_M','PSINDER',
+                          'PROM_OCUP', 'P3YM_HLI']]
+
 Values = ['Total de la entidad','Total del municipio',
          'Total de la localidad urbana', 'Total AGEB urbana']
-CENSO_2020_USE = CENSO_2020.query("NOM_LOC != @Values")
 
-CENSO_2020_USE.head(2)
+CENSO_2020 = CENSO_2020.query("NOM_LOC != @Values")
 
+CENSO_2020.head(2)                         
 ```
+
 
 
 > Dentro de la base de datos existe la presencia de filas donde los valores son simbolos o caracteres especiales(*, N/D, 99999, etc), por lo que es necesario remplazarlos por valores NAN.
