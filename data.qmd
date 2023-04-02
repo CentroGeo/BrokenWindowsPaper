@@ -1260,26 +1260,3 @@ DATA_SET_FINAL_POINT.groupby(['MUN']).agg({'DIS_COL':'mean',
 SOCIAL_PNT_MUN.head(4)
 ```
 
-### Resultados 
-
-> Resumimos los resultados en dos tablas que nos hablan del valor de la varianza por ambos caminos de bifurcación @tbl-panel
-
-::: {#tbl-panel layout-ncol=2}
-
-|Caso 01|
-|--------|--------|--------|--------|--------|
-|Colonia|Social|61.258%|Fisico| 35.943%|
-|Alcaldia|Social|76.681%|Fisico | 60.443%|
-
-: Clave Manzana {#tbl-first}
-
-|Caso 02|
-|--------|--------|--------|--------|--------|
-|Colonia|Social|57.266%|Fisico| 31.155%|
-|Alcaldia|Social|86.8%|Fisico | 67.796%|
-
-: Geom Point {#tbl-second}
-
-Resultados
-
-:::
