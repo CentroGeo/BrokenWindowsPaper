@@ -429,7 +429,7 @@ DESVE_ALCA.head(2)
 ```
 
 
-> En este punto, podemos unir toda la información a la tabla original y renombramos las columnas de desventajas en cada nivel #### ESTA SECCION PUEDE IR AL FINAL PARA VER LOS MAPAS ####
+> En este punto, podemos unir toda la información a la tabla original y hacer unos mapas para ver como se veria la distribución a nivel colonia y alcaldia 
 
 ```{python}
 #| eval: true
