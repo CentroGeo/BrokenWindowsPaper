@@ -941,3 +941,35 @@ DESVE_ALCA.head(5)
 DESVE_ALCA.to_csv(Entradas + "Variables_Alcaldia.csv", encoding = 'Latin-1', index = False)
 
 ```
+
+# Variables de control uso de suelos
+
+Para este caso se tienen las siguientes variables contabilizadas
+
+```{python}
+#| eval: true
+#| echo: false
+
+table = [["Número de estaciones de metro","Número de estaciones de metrobus"],
+         ["Tiendas","Bares"],
+         ["Restaurantes","Densidad de población(Km2)"]]
+Markdown(tabulate(
+  table, 
+  headers=["Variables de control", ""]))
+```
+
+## Lineas de Metro
+
+Procedemos a leer el archivo que contiene la información de las estaciones de metro y repoyectamos el sistema de coordendas a 6362, esto lo hacemos porque el archivo inicial viene proyectado en EPSG 32614 (UTM ZONA 14)
+
+```{python}
+#| eval: true
+### Se carga el archivo espacial de Manzanas
+
+METRO_CDMX = gpd.read_file(Entradas +'STC_Metro.json').to_crs(6362)
+METRO_CDMX = METRO_CDMX[['CVE_EST','geometry']]
+
+METRO_CDMX.head(2)
+```
+
+Ahora recordadnoq
