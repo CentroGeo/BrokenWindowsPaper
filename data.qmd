@@ -916,8 +916,9 @@ DESVE_COL
 
 ## Resultados Finales
 
-> Las base de datos finales son:
+> En este punto tenemos listas nuestras bases de datos a nivel colonia y alcaldia con las varibles de concentración de desventajas, Desorden Social y Desorden Físico.
 
+> A modo de resguardo, exportaremos esta información
 
 ```{python}
 #| eval: true
@@ -926,6 +927,7 @@ DESVE_COL
 
 DESVE_COL.head(5)
 
+DESVE_COL.to_csv(Entradas + "Variables_Colonias.csv", encoding = 'Latin-1', index = False)
 
 ```
 
@@ -937,5 +939,7 @@ DESVE_COL.head(5)
 #### Información a nivel Alcaldia : Concentración de desventajas + Desorden Social + Desorden Físico.
 
 DESVE_ALCA.head(5)
+
+DESVE_ALCA.to_csv(Entradas + "Variables_Alcaldia.csv", encoding = 'Latin-1', index = False)
 
 ```
