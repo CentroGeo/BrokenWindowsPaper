@@ -481,7 +481,7 @@ plt.show()
 ```
 
 
-# Desorden Social y Físico
+## Índice del Desorden Social y Físico
 
 > En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres, para este caso se han usado las llamadas del primer y segundo semestre del 2021.
 
@@ -719,7 +719,7 @@ SOCIAL_FISICO.head(2)
 
 
 
-## Desorden Social y Fisico a nivel Alcaldia 
+### Desorden a nivel Alcaldia 
 
 > De la misma forma que se ejecuto codigo pasado, lo que necesitamos es el grupamiento de datos por nivel alcaldia para calcular la componente de Desorden Social por  "PCA"
 
@@ -777,12 +777,9 @@ DESVE_ALCA
 ```
 
 
-## **Desorden Social y Fisico a nivel Colonia**
+### Desorden a nivel Colonia
 
 > Para este caso y al contar con la geometria de las colonias previamente usada, contaremos el total de eventos de cada una de las clases en las colonias. Para eso necesitamos inicialmente que nuestra base de datos sea espacializada, es decir que cuente con una columna de geometria espacial
-
-
-### Caso por Mananzas y Puntos Geom
 
 > Comenzamos usando la tabla que habiamos creado con anterioridad, aquella donde se hicieron las correciones a la clave manzanada (USO_MANZAS). De la tabla  se crean las geometrias las cuales necesitan tener definido un sistema de proyección.
 
@@ -858,8 +855,7 @@ MANZANA_911_DUMMMY.head(5)
 MANZANA_911_DUMMMY.CVE_COL.value_counts()
 ```
 
-
-## Calculo de índices
+**Desorden Social**
 
 > Para construirlo repetimos los procesos anteriores para agrupacion y aplicacion de la función.
 
@@ -879,7 +875,9 @@ SOCIAL_PNT_COL = CONC_DIS(SOC_POINT_COL, 'CVE_COL','SOCIAL_COL')
 SOCIAL_PNT_COL.head(2)
 ```
 
-> Desorden fisico
+> **Desorden fisico**
+
+> Para construirlo repetimos los procesos anteriores para agrupacion y aplicacion de la función.
 
 ```{python}
 #| eval: true
