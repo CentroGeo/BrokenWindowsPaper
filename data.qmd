@@ -197,7 +197,7 @@ plt.show()
 
 ```{python}
 #| eval: true
-COLONIAS_CDMX = gpd.read_file(Entradas +'COLONIAS.json')
+COLONIAS_CDMX = gpd.read_file(Entradas +'COLONIAS.json').rename({ "CVEUT": "CVE_COL"}, axis = 1)
 print("Colonias CRS", COLONIAS_CDMX.crs)
 print("Manzanas CRS", MERGE.crs)
 ```
@@ -278,7 +278,7 @@ $$ Alcaldia \to Colonia \to Manzana $$
 DATA_FINAL_USE = MANZA_CDMX.merge(INTERSECCION,
                                   left_on = 'CVEGEO',
                                   right_on = 'CVEGEO',
-                                  how = 'inner').rename({"CVEUT": "CVE_COL", "NOMUT": "NOM_COL", "ID": "ID_COL"}, 
+                                  how = 'inner').rename({ "NOMUT": "NOM_COL", "ID": "ID_COL"}, 
                                                         axis = 1)
 
 DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC',
@@ -925,6 +925,8 @@ DESVE_COL
 
 DESVE_COL.to_csv(Entradas + "Variables_Colonias.csv", encoding = 'Latin-1', index = False)
 
+print(DESVE_COL.shape)
+
 DESVE_COL.head(5)
 
 
@@ -939,6 +941,7 @@ DESVE_COL.head(5)
 
 DESVE_ALCA.to_csv(Entradas + "Variables_Alcaldia.csv", encoding = 'Latin-1', index = False)
 
+print(DESVE_ALCA.shape)
 DESVE_ALCA.head(5)
 
 
@@ -962,7 +965,7 @@ Markdown(tabulate(
 
 ## Lineas de Metro
 
-Procedemos a leer el archivo que contiene la información de las estaciones de metro y repoyectamos el sistema de coordendas a 6362, esto lo hacemos porque el archivo inicial viene proyectado en EPSG 32614 (UTM ZONA 14)
+Procedemos a leer el archivo que contiene la información de las estaciones de metro y repoyectamos el sistema de coordendas a 6362; la reproyección la hacemos porque el archivo inicial viene proyectado en EPSG 32614 (UTM ZONA 14)
 
 ```{python}
 #| eval: true
@@ -985,4 +988,14 @@ METRO_CDMX = gpd.sjoin(COLONIAS_CDMX,
                          how = "left", 
                          op = 'contains')
 METRO_CDMX.head(2)
+```
+
+Procedemos al conteo de las unidades en cada una de las colonias
+
+
+```{python}
+#| eval: true
+METRO_COL = pd.DataFrame(METRO_CDMX.groupby(['CVE_COL']).agg({'CVE_EST':'sum'}).reset_index())
+
+COLONIAS_CDMX.shape
 ```
