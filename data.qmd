@@ -573,7 +573,7 @@ All_Data.head(2)
 
 > En esta seccion para calcular los valores de desorden social y fisico, nos centraremos en usar la información de la columna "manzana" de las llamadas para unir con la base donde de desventajas y tener la informacion a nivel Alcaldia.
 
-## Corrección columna clave de manzana
+**Corrección de la columna clave de manzana**
 
 > Las claves de manzanas que se encuentran asignadas necesitan un procedo de corrección y limpieza.
 
@@ -662,7 +662,6 @@ USO_MANZAS = USO_MANZAS.drop(['manzana_x', 'manzana_y'], axis = 1)
 USO_MANZAS.head(3)
 ```
 
-## **Conteo de eventos**
 
 > Ahora vamos a contar los eventos de una determinada clase en el tipo de incidentes estan inmersos en las manzanas. Para la forma con columna y claves manzanas, seleccionamos unicamente las columnas de trabajo, en este caso se eliminan longitud y latitud.
 
@@ -720,7 +719,7 @@ SOCIAL_FISICO.head(2)
 
 
 
-### Desorden Social y Fisico a nivel Alcaldia 
+## Desorden Social y Fisico a nivel Alcaldia 
 
 > De la misma forma que se ejecuto codigo pasado, lo que necesitamos es el grupamiento de datos por nivel alcaldia para calcular la componente de Desorden Social por  "PCA"
 
@@ -778,7 +777,7 @@ DESVE_ALCA
 ```
 
 
-### **Desorden Social y Fisico a nivel Colonia**
+## **Desorden Social y Fisico a nivel Colonia**
 
 > Para este caso y al contar con la geometria de las colonias previamente usada, contaremos el total de eventos de cada una de las clases en las colonias. Para eso necesitamos inicialmente que nuestra base de datos sea espacializada, es decir que cuente con una columna de geometria espacial
 
@@ -809,7 +808,6 @@ print (COLONIAS_CDMX.crs)
 
 > Ahora se van a contabilizar el número de clases de geometria punto dentro de las colonias de geometria poligonal, para que eso suceda, debemos hacer un join geoespacial.
 
-### Contabilizando los puntos dentro de poligonos 
 
 ```{python}
 #| eval: true
@@ -897,7 +895,6 @@ FISICO_PNT_COL = CONC_DIS(FISI_POINT_COL, 'CVE_COL','FISICO_COL')
 
 FISICO_PNT_COL.head(2)
 ```
-
 
 
 > Ahora se unen los resultados de la concentración de desventajas con los resultados del desorden social y físico
