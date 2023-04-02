@@ -328,19 +328,6 @@ DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
 
 >En esta sección se cálcula el indice de **_Concetración de desventajas_** mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel **Alcaldias y Delegaciones**. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.
 
-### Nivel Colonias
-
-> Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por "PCA"
-
-```{python}
-#| eval: true
-COLONIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['CVE_COL']).agg({'PSINDER':'sum',
-                                                                  'PROM_OCUP': 'mean',
-                                                                  'P3YM_HLI':'sum',
-                                                                  'P_15A24_M': 'sum'}).reset_index())
-COLONIA_PCA.head(2)
-```
-
 
 ::: {.callout-important icon=false}
 ## Impotante
@@ -392,6 +379,19 @@ def CONC_DIS (TABLA, DIM_CLAVE, PCA_NAME):
 
     return (TABLA)
 
+```
+
+### Nivel Colonias
+
+> Para este punto agrupamos los datos por nivel colonia para extraer el valor del índice por "PCA"
+
+```{python}
+#| eval: true
+COLONIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['CVE_COL']).agg({'PSINDER':'sum',
+                                                                  'PROM_OCUP': 'mean',
+                                                                  'P3YM_HLI':'sum',
+                                                                  'P_15A24_M': 'sum'}).reset_index())
+COLONIA_PCA.head(2)
 ```
 
 
