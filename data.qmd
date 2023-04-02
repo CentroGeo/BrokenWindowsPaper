@@ -324,7 +324,7 @@ DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
 
 
 
-### Análisis de Componentes Principales (PCA)
+## Análisis de Componentes Principales (PCA)
 
 >En esta sección se cálcula el indice de **_Concetración de desventajas_** mediante la reducción de las dimensiónes por componentes principales (PCA). Esto se hace a nivel **Alcaldias y Delegaciones**. La información a nivel alcaldia y delegacion es un proceso de reagrupacion y nuevos calculos de los valores.
 
