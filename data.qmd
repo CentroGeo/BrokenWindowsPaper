@@ -102,7 +102,6 @@ CENSO_2020 = CENSO_2020.query("NOM_LOC != @Values")
 CENSO_2020.head(2)                         
 ```
 
-
 > Dentro de la base de datos existe la presencia de filas donde los valores son simbolos o caracteres especiales(*, N/D, 99999, etc), por lo que es necesario remplazarlos por valores NAN.
 
 ```{python}
@@ -183,7 +182,7 @@ MERGE.crs
 ```
 
 
-> Hacemos un mapa por que nos gustan los mapitas.
+> Hacemos un mapa de P_15A24_M para ver su distribución espacial.
 
 ```{python}
 #| eval: true
