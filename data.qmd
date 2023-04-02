@@ -985,17 +985,18 @@ Ahora recordando la parte del join espacial procederemos a hacer uno con las est
 
 METRO_CDMX = gpd.sjoin(COLONIAS_CDMX, 
                         METRO_CDMX[['CVE_EST','geometry']], 
-                         how = "left", 
+                         how = "inner", 
                          op = 'contains')
 METRO_CDMX.head(2)
 ```
 
 Procedemos al conteo de las unidades en cada una de las colonias
 
-
 ```{python}
 #| eval: true
-METRO_COL = pd.DataFrame(METRO_CDMX.groupby(['CVE_COL']).agg({'CVE_EST':'sum'}).reset_index())
+METRO_COL = pd.DataFrame(METRO_CDMX.groupby(['CVE_COL']).agg({'CVE_EST':'count'}).reset_index())
 
-COLONIAS_CDMX.shape
+METRO_COL.CVE_EST.value_counts()
 ```
+
+Ahora con esta información podemos unir los resultados a la base donde se tiene la clave municipal y unir los resultados a nuestras tablas de desventajas e indices 
