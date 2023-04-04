@@ -645,6 +645,8 @@ METRO_CDMX = METRO_CDMX[['CVE_EST','geometry']]
 METRO_CDMX.head(2)
 ```
 
+
+
 ```{python}
 #| eval: true
 #|
@@ -672,6 +674,7 @@ METRO_CDMX.head(2)
 METRO_COL = pd.DataFrame(METRO_CDMX.groupby(['CVE_COL']).agg({'METRO':'count'}).reset_index())
 METRO_MUN = pd.DataFrame(METRO_CDMX.groupby(['MUN']).agg({'METRO':'count'}).reset_index())
 ```
+
 
 ```{python}
 #| eval: true
@@ -726,6 +729,7 @@ METROBUS_CDMX.plot(ax = base, color = 'red', markersize = 2, figsize=(5,5))
 
 ```
 
+
 ```{python}
 #| eval: true
 #|
@@ -737,12 +741,14 @@ METROBUS_CDMX = gpd.sjoin(COLONIAS_CDMX,
 METROBUS_CDMX.head(2)
 ```
 
+
 ```{python}
 #| eval: true
 #|
 METROBUS_COL = pd.DataFrame(METROBUS_CDMX.groupby(['CVE_COL']).agg({'METROBUS':'count'}).reset_index())
 METROBUS_MUN = pd.DataFrame(METROBUS_CDMX.groupby(['MUN']).agg({'METROBUS':'count'}).reset_index())
 ```
+
 
 ```{python}
 #| eval: true
@@ -757,6 +763,7 @@ COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(METROBUS_COL,
 COLONIA_RESULTADOS.head(2)
 ```
 
+
 ```{python}
 #| eval: true
 #|
@@ -768,4 +775,183 @@ ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METROBUS_MUN,
                                                 right_on = 'MUN',
                                                 how = 'left')
 ALCALDIA_RESULTADOS.head(5)
+```
+
+
+## **DENUE: Tiendas, Bares y Restaurantes**
+
+```{python}
+#| eval: true
+#|
+DENUE = pd.read_csv(Entradas + 'DENUE.csv', encoding = 'Latin-1').drop(['entidad_cvegeo'], axis = 1)
+DENUE = gpd.GeoDataFrame(DENUE,
+                         geometry = gpd.points_from_xy(DENUE.denue_longitud,
+                                                       DENUE.denue_latitud),
+                         crs=4326).drop(['denue_latitud',
+                                         'denue_longitud'], axis = 1).to_crs(6362)
+DENUE.head(2)
+```
+
+
+```{python}
+#| eval: true
+
+def CLASE (codigo):
+    Tienda = ['461110', '461211', '461212', '461213', '461220', '462111', '462112', 
+              '462210', '464111', '464112']
+    Bares = ['722411', '722412']
+    Restaurante = ['722511', '722512', '722513', '722514', '722515', '722516', '722517', '722518', '722519']
+    usos = {'Tienda': Tienda, 'Bares':Bares, 'Restaurante': Restaurante}
+    for actividad, claves in usos.items():
+        for c in claves:
+            if str(codigo).startswith(c):
+                return actividad
+clases = DENUE['actividad_cve'].apply(CLASE)
+
+DENUE['Clase'] = clases
+DENUE = DENUE.drop(['actividad_nombre', 
+                    'actividad_cve'], axis = 1)
+DENUE.head(5)
+
+```
+
+
+
+```{python}
+#| eval: true
+
+CLASE_DENUE = gpd.sjoin(COLONIAS_CDMX.drop(['ENT','NOMDT','NOMUT','DTTOLOC','ID'], axis = 1),
+                        DENUE,
+                        how = "inner", 
+                        op = 'contains').drop(['geometry','index_right'], axis = 1)
+CLASE_DENUE.head(2)
+
+```
+
+
+```{python}
+#| eval: true
+
+DENUE_DMY = pd.get_dummies(CLASE_DENUE, 
+                           columns=["Clase"],
+                           prefix=["DM"]).rename({'CVEDT': 'MUN'}, axis = 1)
+
+DENUE_DMY.head(3)
+```
+
+
+
+```{python}
+#| eval: true
+
+DENUE_COL = pd.DataFrame(DENUE_DMY.groupby(['CVE_COL']).agg({'DM_Bares':'count',
+                                                             'DM_Restaurante': 'count',
+                                                             'DM_Tienda': 'count'}).reset_index()).rename({'DM_Bares': 'BAR',
+                                                                                                           'DM_Restaurante': 'RESTAURANTE',
+                                                                                                           'DM_Tienda': 'TIENDA'},
+                                                                                                          axis = 1)
+
+
+DENUE_MUN = pd.DataFrame(DENUE_DMY.groupby(['MUN']).agg({'DM_Bares':'count',
+                                                         'DM_Restaurante': 'count',
+                                                         'DM_Tienda': 'count'}).reset_index()).rename({'DM_Bares': 'BAR',
+                                                                                                       'DM_Restaurante': 'RESTAURANTE',
+                                                                                                       'DM_Tienda': 'TIENDA'},
+                                                                                                      axis = 1)
+
+```
+
+
+
+```{python}
+#| eval: true
+
+COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(DENUE_COL, 
+                                              left_on = 'CVE_COL', 
+                                              right_on = 'CVE_COL',
+                                              how = 'left')
+COLONIA_RESULTADOS.head(5)
+
+```
+
+
+
+```{python}
+#| eval: true
+
+ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(DENUE_MUN,
+                                                left_on = 'MUN',
+                                                right_on = 'MUN',
+                                                how = 'left')
+ALCALDIA_RESULTADOS.head(5)
+
+```
+
+
+## **Densidad de Población**
+
+
+```{python}
+#| eval: true
+
+DEN_POB = pd.DataFrame(INTERSECCION.groupby(['CVE_COL']).agg({'POBTOT':'sum'}).reset_index())
+
+
+DEN_POB = COLONIAS_CDMX.merge(DEN_POB,
+                              left_on = 'CVE_COL',
+                              right_on = 'CVE_COL',
+                              how = 'left').drop(['ENT','NOMDT',
+                                                  'NOMUT','DTTOLOC',
+                                                  'ID'], 
+                                                 axis = 1).rename({'CVEDT': 'MUN'}, axis = 1)
+
+DEN_POB['DEN_POB'] = DEN_POB['POBTOT']/DEN_POB.geometry.area
+
+```
+
+
+```{python}
+#| eval: true
+
+DENSIDAD_COLONIA = pd.DataFrame(DEN_POB.groupby(['CVE_COL']).agg({'DEN_POB':'sum'}).reset_index())
+
+DENSIDAD_MUN = pd.DataFrame(DEN_POB.groupby(['MUN']).agg({'DEN_POB':'sum'}).reset_index())
+
+```
+
+
+```{python}
+#| eval: true
+
+COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(DENSIDAD_COLONIA, 
+                                              left_on = 'CVE_COL', 
+                                              right_on = 'CVE_COL',
+                                              how = 'left')
+COLONIA_RESULTADOS.head(5)
+
+```
+
+
+```{python}
+#| eval: true
+
+ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(DENSIDAD_MUN,
+                                                left_on = 'MUN',
+                                                right_on = 'MUN',
+                                                how = 'left')
+ALCALDIA_RESULTADOS.head(5)
+
+```
+
+
+
+```{python}
+#| eval: true
+
+#### Se exportan los resultados 
+
+COLONIA_RESULTADOS
+
+ALCALDIA_RESULTADOS
+
 ```
