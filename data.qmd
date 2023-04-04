@@ -354,7 +354,7 @@ def CONC_DIS (TABLA, DIM_CLAVE, PCA_NAME):
 
 ```{python}
 #| eval: true
-COLONIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['CVE_COL']).agg({'PSINDER':'sum',
+COLONIA_PCA = pd.DataFrame(INTERSECCION.groupby(['CVE_COL']).agg({'PSINDER':'sum',
                                                                   'PROM_OCUP': 'mean',
                                                                   'P3YM_HLI':'sum',
                                                                   'P_15A24_M': 'sum'}).reset_index())
@@ -378,7 +378,7 @@ DESVE_COL.head(2)
 
 ```{python}
 #| eval: true
-ALCALDIA_PCA = pd.DataFrame(DATA_FIN_USE.groupby(['MUN']).agg({'PSINDER':'sum',
+ALCALDIA_PCA = pd.DataFrame(INTERSECCION.groupby(['MUN']).agg({'PSINDER':'sum',
                                                                'PROM_OCUP': 'mean',
                                                                'P3YM_HLI':'sum',
                                                                'P_15A24_M': 'sum'}).reset_index())
