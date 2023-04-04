@@ -633,9 +633,9 @@ ALCALDIA_RESULTADOS = DESVE_ALCA.merge(MUNI_SOCIAL,
 ALCALDIA_RESULTADOS.head(5)
 ```
 
-# VARIABLES DE CONTROL [Colonias y Alcaldias]
+# Variables de Control
 
-**METRO**
+## **METRO**
 
 ```{python}
 #| eval: true
@@ -700,7 +700,7 @@ ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METRO_MUN,
 ALCALDIA_RESULTADOS.head(5)
 ```
 
-**METROBUS**
+## **METROBUS**
 
 
 
