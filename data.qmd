@@ -683,7 +683,7 @@ COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(METRO_COL,
                                               left_on = 'CVE_COL', 
                                               right_on = 'CVE_COL',
                                               how = 'left')
-COLONIA_RESULTADOS.shape
+COLONIA_RESULTADOS.head(5)
 ```
 
 
@@ -697,7 +697,7 @@ ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METRO_MUN,
                                                 left_on = 'MUN',
                                                 right_on = 'MUN',
                                                 how = 'left')
-ALCALDIA_RESULTADOS.shape
+ALCALDIA_RESULTADOS.head(5)
 ```
 
 **METROBUS**
@@ -724,4 +724,48 @@ METROBUS_CDMX.head(2)
 base = COLONIAS_CDMX.plot(color ='black',figsize=(5,5))
 METROBUS_CDMX.plot(ax = base, color = 'red', markersize = 2, figsize=(5,5))
 
+```
+
+```{python}
+#| eval: true
+#|
+METROBUS_CDMX = gpd.sjoin(COLONIAS_CDMX, 
+                          METROBUS_CDMX[['CVE_EST','geometry']], 
+                          how = "inner", 
+                          op = 'contains').rename({'CVEDT': 'MUN', 
+                                                   'CVE_EST': 'METROBUS'}, axis = 1)
+METROBUS_CDMX.head(2)
+```
+
+```{python}
+#| eval: true
+#|
+METROBUS_COL = pd.DataFrame(METROBUS_CDMX.groupby(['CVE_COL']).agg({'METROBUS':'count'}).reset_index())
+METROBUS_MUN = pd.DataFrame(METROBUS_CDMX.groupby(['MUN']).agg({'METROBUS':'count'}).reset_index())
+```
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico + METRO + METROBUS
+### NIVEL COLONIA 
+
+COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(METROBUS_COL, 
+                                              left_on = 'CVE_COL', 
+                                              right_on = 'CVE_COL',
+                                              how = 'left')
+COLONIA_RESULTADOS.head(2)
+```
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico + METRO + METROBUS
+### NIVEL ALCALDIA 
+
+ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METROBUS_MUN,
+                                                left_on = 'MUN',
+                                                right_on = 'MUN',
+                                                how = 'left')
+ALCALDIA_RESULTADOS.head(5)
 ```
