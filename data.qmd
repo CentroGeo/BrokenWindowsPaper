@@ -396,58 +396,6 @@ DESVE_ALCA.head(2)
 ```
 
 
-> En este punto, podemos unir toda la información a la tabla original y hacer unos mapas para ver como se veria la distribución a nivel colonia y alcaldia 
-
-```{python}
-#| eval: true
-DATA_FIN_USE = DATA_FIN_USE.merge(DESVE_COL, ##### NO NECESITO MAS COPIAS :´(
-                                       left_on = 'CVE_COL', 
-                                       right_on = 'CVE_COL', 
-                                       how = 'inner').merge(DESVE_ALCA, 
-                                                            left_on ='MUN', 
-                                                            right_on = 'MUN' , 
-                                                            how = 'inner')
-
-DATA_FIN_USE.head(2)
-```
-
-> Hacemos unos mapas de Concentración de desventajas a nivel Colonia y Alcaldia 
-
-```{python}
-#| eval: true
-
-fig, ax = plt.subplots(figsize=(8, 8))
-ax = DATA_FIN_USE.plot(ax = ax, column='DIS_COL',
-                            legend= True,
-                            alpha=0.8,
-                            scheme='NaturalBreaks',
-                            cmap='copper',
-                            classification_kwds={'k':6})
-ax.set(title='Desventajas a nivel Colonia, Ciudad de México')
-
-ax.set_axis_off()
-
-plt.show()
-```
-
-```{python}
-#| eval: true
-
-fig, ax = plt.subplots(figsize=(8, 8))
-ax = DATA_FIN_USE.plot(ax = ax, column='DIS_MUN',
-                            legend= True,
-                            alpha=0.8,
-                            scheme='NaturalBreaks',
-                            cmap='copper',
-                            classification_kwds={'k':6})
-ax.set(title='Desventajas a nivel Alcaldias, Ciudad de México')
-
-ax.set_axis_off()
-
-plt.show()
-```
-
-
 # Índice del Desorden Social y Físico
 
 > En esta seccion se usaran las llamadas del 911 para crear los índices de desorden social y desorden fisico comprendidas en dos semestres, para este caso se han usado las llamadas del primer y segundo semestre del 2021.
