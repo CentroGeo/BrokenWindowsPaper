@@ -526,10 +526,23 @@ CATEGORIAS_DMY = pd.get_dummies(CATEGORIAS,
 CATEGORIAS_DMY.head(3)
 ```
 
+> **Ahora calculamos los indices**
 
 ```{python}
 #| eval: true
 #|
+
+### Social a nivel colonia 
+
+SOCIAL_COL = pd.DataFrame(CATEGORIAS_DMY.groupby(['CVE_COL']).agg({'DM_DROGADO': 'sum',
+                                                                   'DM_EBRIO':'sum',
+                                                                   'DM_ESCANDALO': 'sum',
+                                                                   'DM_FIESTA':'sum',
+                                                                   'DM_BASURA_P': 'sum',
+                                                                   'DM_PERSO_R': 'sum'}).reset_index())
+
+COLONIA_SOCIAL = CONC_DIS(SOCIAL_COL, 'CVE_COL', 'SOCIAL_COL')
+COLONIA_SOCIAL.head(2)
 
 ```
 
