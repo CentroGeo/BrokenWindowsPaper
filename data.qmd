@@ -635,6 +635,7 @@ ALCALDIA_RESULTADOS.head(5)
 
 # VARIABLES DE CONTROL [Colonias y Alcaldias]
 
+**METRO**
 
 ```{python}
 #| eval: true
@@ -647,19 +648,21 @@ METRO_CDMX.head(2)
 ```{python}
 #| eval: true
 #|
+base = COLONIAS_CDMX.plot(color ='black',figsize=(5,5))
+METRO_CDMX.plot(ax = base, color = 'red', markersize = 2, figsize=(5,5))
+```
+
+
+
+```{python}
+#| eval: true
+#|
 METRO_CDMX = gpd.sjoin(COLONIAS_CDMX, 
                         METRO_CDMX[['CVE_EST','geometry']], 
                          how = "inner", 
                          op = 'contains').rename({'CVEDT': 'MUN', 
                                                   'CVE_EST': 'METRO'}, axis = 1)
 METRO_CDMX.head(2)
-```
-
-
-```{python}
-#| eval: true
-#|
-
 ```
 
 
@@ -695,4 +698,30 @@ ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METRO_MUN,
                                                 right_on = 'MUN',
                                                 how = 'left')
 ALCALDIA_RESULTADOS.shape
+```
+
+**METROBUS**
+
+
+
+```{python}
+#| eval: true
+#|
+
+METROBUS_CDMX = gpd.read_file(Entradas +'STC_MetroBus.json').drop(['id', 'description', 
+                                                                   'styleUrl', 'stroke-opacity', 'stroke',
+                                                                   'icon-opacity', 'icon-color', 'icon-scale', 
+                                                                   'icon'], axis = 1).to_crs(6362)
+METROBUS_CDMX.head(2)
+
+```
+
+
+```{python}
+#| eval: true
+#|
+
+base = COLONIAS_CDMX.plot(color ='black',figsize=(5,5))
+METROBUS_CDMX.plot(ax = base, color = 'red', markersize = 2, figsize=(5,5))
+
 ```
