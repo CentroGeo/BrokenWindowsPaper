@@ -485,3 +485,64 @@ All_Data.head(2)
 
 ```
 
+
+```{python}
+#| eval: true
+#|
+All_Data = gpd.GeoDataFrame(All_Data,
+                              geometry = gpd.points_from_xy(All_Data.longitud,
+                                                            All_Data.latitud), crs=4326).drop(['latitud','longitud'], axis = 1).to_crs(6362)
+All_Data.head(2)
+```
+
+
+```{python}
+#| eval: true
+#|
+base = COLONIAS_CDMX.plot(color ='black',figsize=(5,5))
+All_Data.plot(ax = base, color = 'red', markersize = 2, figsize=(5,5))
+```
+
+
+
+```{python}
+#| eval: true
+#|
+CATEGORIAS = gpd.sjoin(COLONIAS_CDMX.drop(['ENT','NOMDT','NOMUT','DTTOLOC','ID'], axis = 1), 
+                        All_Data[['Categoria','Incidente','geometry']], 
+                         how = "inner", 
+                         op = 'contains').drop(['geometry','index_right'], axis = 1)
+CATEGORIAS.head(2)
+```
+
+
+```{python}
+#| eval: true
+#|
+CATEGORIAS_DMY = pd.get_dummies(CATEGORIAS, 
+                                columns=["Incidente"], 
+                                prefix=["DM"]).rename({'CVEDT': 'MUN'}, axis = 1)
+
+CATEGORIAS_DMY.head(3)
+```
+
+
+```{python}
+#| eval: true
+#|
+
+```
+
+
+```{python}
+#| eval: true
+#|
+
+```
+
+
+```{python}
+#| eval: true
+#|
+
+```
