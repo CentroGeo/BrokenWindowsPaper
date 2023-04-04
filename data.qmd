@@ -198,6 +198,8 @@ plt.show()
 ```{python}
 #| eval: true
 COLONIAS_CDMX = gpd.read_file(Entradas +'COLONIAS.json').rename({ "CVEUT": "CVE_COL"}, axis = 1)
+COLONIAS_CDMX['CVEDT'] = COLONIAS_CDMX['CVEDT'].str.zfill(3)
+
 print("Colonias CRS", COLONIAS_CDMX.crs)
 print("Manzanas CRS", MERGE.crs)
 ```
@@ -259,39 +261,6 @@ INTERSECCION.shape
 ```
 
 
-> Se une la información de overly de las Manzanas ya alineadas con colonias en la geometry de las manzanas para tener la base final. En la base final podemos observar la información a nivel: manzana, colonia y alcaldia, donde esta ultima se extraer en razon directa de la informacion contenida en la base de manzanas.
-
-> Reordenamos la información de la forma "Regional a local" es decir:
-
-$$ Alcaldia \to Colonia \to Manzana $$
-
-1. **Alcaldia**: _ENTIDAD, NOM_ENT, MUN, NOM_MUN, LOC, NOM_LOC,_  
-2. **Colonia**: _ID_COL, CVE_COL, NOM_COL,_ 
-3. **Manzana**: _AGEB, MZA, CVEGEO,_
-3. **Dimensiones**: _POBTOT, PSINDER, PROM_OCUP, P3YM_HLI, P_15A24_M_
-4. **Geometry**
-
-
-```{python}
-#| eval: true
-#| 
-DATA_FINAL_USE = MANZA_CDMX.merge(INTERSECCION,
-                                  left_on = 'CVEGEO',
-                                  right_on = 'CVEGEO',
-                                  how = 'inner').rename({ "NOMUT": "NOM_COL", "ID": "ID_COL"}, 
-                                                        axis = 1)
-
-DATA_FIN_USE = DATA_FINAL_USE[['ENTIDAD','NOM_ENT', 'MUN', 'NOM_MUN', 'LOC', 'NOM_LOC',
-                               'ID_COL','CVE_COL', 'NOM_COL', 'AGEB', 'MZA', 'CVEGEO',
-                               'PSINDER', 'PROM_OCUP', 'P3YM_HLI', 'P_15A24_M',
-                               'geometry']]
-
-print("Forma de los datos: ", DATA_FINAL_USE.shape)
-
-DATA_FIN_USE.head(3)
-
-```
-
 > Se valida que cada manzana este asociada a cada una de las colonias  
 Recorndado que la relación es una colonia a muchas manzanzanas  
 "" Por lo que no deben existir manzanas repetididas"
@@ -302,14 +271,14 @@ $$ C \gets M_{n-1}$$
 > Se valida que no existan manzanas repetidas
 ```{python}
 #| eval: false
-DATA_FINAL_USE.CVEGEO.value_counts()
+INTERSECCION.CVEGEO.value_counts()
 ```
 
 > La relacion de muchas manzanas a una colonia, se valida para cada clave de colonias se repite tantas veces existan manzanas
 
 ```{python}
 #| eval: true
-DATA_FINAL_USE.CVE_COL.value_counts()
+INTERSECCION.CVE_COL.value_counts()
 ```
 
 
@@ -317,7 +286,7 @@ DATA_FINAL_USE.CVE_COL.value_counts()
 
 ```{python}
 #| eval: true
-DATA_FINAL_USE.query('CVE_COL == "07-320"').head(3)
+INTERSECCION.query('CVE_COL == "07-320"').head(3)
 ```
 
 
