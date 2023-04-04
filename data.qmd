@@ -551,6 +551,16 @@ COLONIA_SOCIAL.head(2)
 #| eval: true
 #|
 
+### Fisico a nivel colonia 
+
+FISICO_COL = pd.DataFrame(CATEGORIAS_DMY.groupby(['CVE_COL']).agg({'DM_VEHICULO': 'sum',
+                                                                'DM_GRAFITI':'sum',
+                                                                'DM_AGUA_P': 'sum',
+                                                                'DM_AGUA_N':'sum',
+                                                                'DM_CORTO_ELE': 'sum',
+                                                                'DM_FUGAS_N': 'sum'}).reset_index())
+COLONIA_FISICO = CONC_DIS(FISICO_COL, 'CVE_COL','FISICO_COL')
+COLONIA_FISICO.head(2)
 ```
 
 
@@ -558,4 +568,131 @@ COLONIA_SOCIAL.head(2)
 #| eval: true
 #|
 
+### Social a nivel Municipal
+
+SOCIAL_MUN = pd.DataFrame(CATEGORIAS_DMY.groupby(['MUN']).agg({'DM_DROGADO': 'sum',
+                                                               'DM_EBRIO':'sum',
+                                                               'DM_ESCANDALO': 'sum',
+                                                               'DM_FIESTA':'sum',
+                                                               'DM_BASURA_P': 'sum',
+                                                               'DM_PERSO_R': 'sum'}).reset_index())
+
+MUNI_SOCIAL = CONC_DIS(SOCIAL_MUN, 'MUN', 'SOCIAL_MUN')
+MUNI_SOCIAL.head(2)
+```
+
+```{python}
+#| eval: true
+#|
+### Fisico a nivel colonia 
+
+FISICO_MUN = pd.DataFrame(CATEGORIAS_DMY.groupby(['MUN']).agg({'DM_VEHICULO': 'sum',
+                                                               'DM_GRAFITI':'sum',
+                                                               'DM_AGUA_P': 'sum',
+                                                               'DM_AGUA_N':'sum',
+                                                               'DM_CORTO_ELE': 'sum',
+                                                               'DM_FUGAS_N': 'sum'}).reset_index())
+MUNI_FISICO = CONC_DIS(FISICO_MUN, 'MUN','FISICO_MUN')
+MUNI_FISICO.head(2)
+```
+
+**UNION DE RESULTADOS**
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico
+### NIVEL COLONIA 
+
+COLONIA_RESULTADOS = DESVE_COL.merge(COLONIA_SOCIAL, 
+                                     left_on = 'CVE_COL', 
+                                     right_on = 'CVE_COL', 
+                                     how = 'left').merge(COLONIA_FISICO,
+                                                          left_on = 'CVE_COL',
+                                                          right_on = 'CVE_COL',
+                                                          how = 'left')
+
+COLONIA_RESULTADOS.head(5)
+```
+
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico
+### NIVEL ALCALDIA 
+
+ALCALDIA_RESULTADOS = DESVE_ALCA.merge(MUNI_SOCIAL, 
+                                       left_on = 'MUN', 
+                                       right_on = 'MUN', 
+                                       how = 'left').merge(MUNI_FISICO,
+                                                           left_on = 'MUN',
+                                                           right_on = 'MUN',
+                                                           how = 'left')
+
+ALCALDIA_RESULTADOS.head(5)
+```
+
+# VARIABLES DE CONTROL [Colonias y Alcaldias]
+
+
+```{python}
+#| eval: true
+#|
+METRO_CDMX = gpd.read_file(Entradas +'STC_Metro.json').to_crs(6362)
+METRO_CDMX = METRO_CDMX[['CVE_EST','geometry']]
+METRO_CDMX.head(2)
+```
+
+```{python}
+#| eval: true
+#|
+METRO_CDMX = gpd.sjoin(COLONIAS_CDMX, 
+                        METRO_CDMX[['CVE_EST','geometry']], 
+                         how = "inner", 
+                         op = 'contains').rename({'CVEDT': 'MUN', 
+                                                  'CVE_EST': 'METRO'}, axis = 1)
+METRO_CDMX.head(2)
+```
+
+
+```{python}
+#| eval: true
+#|
+
+```
+
+
+```{python}
+#| eval: true
+#|
+METRO_COL = pd.DataFrame(METRO_CDMX.groupby(['CVE_COL']).agg({'METRO':'count'}).reset_index())
+METRO_MUN = pd.DataFrame(METRO_CDMX.groupby(['MUN']).agg({'METRO':'count'}).reset_index())
+```
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico + METRO
+### NIVEL COLONIA 
+
+COLONIA_RESULTADOS = COLONIA_RESULTADOS.merge(METRO_COL, 
+                                              left_on = 'CVE_COL', 
+                                              right_on = 'CVE_COL',
+                                              how = 'left')
+COLONIA_RESULTADOS.shape
+```
+
+
+```{python}
+#| eval: true
+#|
+### Resultados Concentración de desventajas + Desorden Social + Desorden Físico + METRO
+### NIVEL ALCALDIA 
+
+ALCALDIA_RESULTADOS = ALCALDIA_RESULTADOS.merge(METRO_MUN,
+                                                left_on = 'MUN',
+                                                right_on = 'MUN',
+                                                how = 'left')
+ALCALDIA_RESULTADOS.shape
 ```
