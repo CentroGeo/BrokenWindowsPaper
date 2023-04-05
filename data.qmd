@@ -844,17 +844,17 @@ DENUE_DMY.head(3)
 ```{python}
 #| eval: true
 
-DENUE_COL = pd.DataFrame(DENUE_DMY.groupby(['CVE_COL']).agg({'DM_Bares':'count',
-                                                             'DM_Restaurante': 'count',
-                                                             'DM_Tienda': 'count'}).reset_index()).rename({'DM_Bares': 'BAR',
+DENUE_COL = pd.DataFrame(DENUE_DMY.groupby(['CVE_COL']).agg({'DM_Bares':'sum',
+                                                             'DM_Restaurante': 'sum',
+                                                             'DM_Tienda': 'sum'}).reset_index()).rename({'DM_Bares': 'BAR',
                                                                                                            'DM_Restaurante': 'RESTAURANTE',
                                                                                                            'DM_Tienda': 'TIENDA'},
                                                                                                           axis = 1)
 
 
-DENUE_MUN = pd.DataFrame(DENUE_DMY.groupby(['MUN']).agg({'DM_Bares':'count',
-                                                         'DM_Restaurante': 'count',
-                                                         'DM_Tienda': 'count'}).reset_index()).rename({'DM_Bares': 'BAR',
+DENUE_MUN = pd.DataFrame(DENUE_DMY.groupby(['MUN']).agg({'DM_Bares':'sum',
+                                                         'DM_Restaurante': 'sum',
+                                                         'DM_Tienda': 'sum'}).reset_index()).rename({'DM_Bares': 'BAR',
                                                                                                        'DM_Restaurante': 'RESTAURANTE',
                                                                                                        'DM_Tienda': 'TIENDA'},
                                                                                                       axis = 1)
