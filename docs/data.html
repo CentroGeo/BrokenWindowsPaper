@@ -211,6 +211,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <ul class="collapse">
   <li><a href="#metro" id="toc-metro" class="nav-link" data-scroll-target="#metro"><span class="toc-section-number">7.1</span>  <strong>METRO</strong></a></li>
   <li><a href="#metrobus" id="toc-metrobus" class="nav-link" data-scroll-target="#metrobus"><span class="toc-section-number">7.2</span>  <strong>METROBUS</strong></a></li>
+  <li><a href="#denue-tiendas-bares-y-restaurantes" id="toc-denue-tiendas-bares-y-restaurantes" class="nav-link" data-scroll-target="#denue-tiendas-bares-y-restaurantes"><span class="toc-section-number">7.3</span>  <strong>DENUE: Tiendas, Bares y Restaurantes</strong></a></li>
+  <li><a href="#densidad-de-población" id="toc-densidad-de-población" class="nav-link" data-scroll-target="#densidad-de-población"><span class="toc-section-number">7.4</span>  <strong>Densidad de Población</strong></a></li>
   </ul></li>
   </ul>
 </nav>
@@ -2275,6 +2277,850 @@ Name: mes_cierre, dtype: int64</code></pre>
       <td>-0.774346</td>
       <td>10.0</td>
       <td>17.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="denue-tiendas-bares-y-restaurantes" class="level2" data-number="7.3">
+<h2 data-number="7.3" class="anchored" data-anchor-id="denue-tiendas-bares-y-restaurantes"><span class="header-section-number">7.3</span> <strong>DENUE: Tiendas, Bares y Restaurantes</strong></h2>
+<div class="cell" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>DENUE <span class="op">=</span> pd.read_csv(Entradas <span class="op">+</span> <span class="st">'DENUE.csv'</span>, encoding <span class="op">=</span> <span class="st">'Latin-1'</span>).drop([<span class="st">'entidad_cvegeo'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>DENUE <span class="op">=</span> gpd.GeoDataFrame(DENUE,</span>
+<span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>                         geometry <span class="op">=</span> gpd.points_from_xy(DENUE.denue_longitud,</span>
+<span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>                                                       DENUE.denue_latitud),</span>
+<span id="cb63-5"><a href="#cb63-5" aria-hidden="true" tabindex="-1"></a>                         crs<span class="op">=</span><span class="dv">4326</span>).drop([<span class="st">'denue_latitud'</span>,</span>
+<span id="cb63-6"><a href="#cb63-6" aria-hidden="true" tabindex="-1"></a>                                         <span class="st">'denue_longitud'</span>], axis <span class="op">=</span> <span class="dv">1</span>).to_crs(<span class="dv">6362</span>)</span>
+<span id="cb63-7"><a href="#cb63-7" aria-hidden="true" tabindex="-1"></a>DENUE.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="51">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>actividad_nombre</th>
+      <th>actividad_cve</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Comercio al por menor de vinos y licores</td>
+      <td>461211</td>
+      <td>POINT (2803952.280 831440.241)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Comercio al por menor de vinos y licores</td>
+      <td>461211</td>
+      <td>POINT (2805964.648 834595.217)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb64"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> CLASE (codigo):</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>    Tienda <span class="op">=</span> [<span class="st">'461110'</span>, <span class="st">'461211'</span>, <span class="st">'461212'</span>, <span class="st">'461213'</span>, <span class="st">'461220'</span>, <span class="st">'462111'</span>, <span class="st">'462112'</span>, </span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>              <span class="st">'462210'</span>, <span class="st">'464111'</span>, <span class="st">'464112'</span>]</span>
+<span id="cb64-4"><a href="#cb64-4" aria-hidden="true" tabindex="-1"></a>    Bares <span class="op">=</span> [<span class="st">'722411'</span>, <span class="st">'722412'</span>]</span>
+<span id="cb64-5"><a href="#cb64-5" aria-hidden="true" tabindex="-1"></a>    Restaurante <span class="op">=</span> [<span class="st">'722511'</span>, <span class="st">'722512'</span>, <span class="st">'722513'</span>, <span class="st">'722514'</span>, <span class="st">'722515'</span>, <span class="st">'722516'</span>, <span class="st">'722517'</span>, <span class="st">'722518'</span>, <span class="st">'722519'</span>]</span>
+<span id="cb64-6"><a href="#cb64-6" aria-hidden="true" tabindex="-1"></a>    usos <span class="op">=</span> {<span class="st">'Tienda'</span>: Tienda, <span class="st">'Bares'</span>:Bares, <span class="st">'Restaurante'</span>: Restaurante}</span>
+<span id="cb64-7"><a href="#cb64-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> actividad, claves <span class="kw">in</span> usos.items():</span>
+<span id="cb64-8"><a href="#cb64-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> c <span class="kw">in</span> claves:</span>
+<span id="cb64-9"><a href="#cb64-9" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="bu">str</span>(codigo).startswith(c):</span>
+<span id="cb64-10"><a href="#cb64-10" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> actividad</span>
+<span id="cb64-11"><a href="#cb64-11" aria-hidden="true" tabindex="-1"></a>clases <span class="op">=</span> DENUE[<span class="st">'actividad_cve'</span>].<span class="bu">apply</span>(CLASE)</span>
+<span id="cb64-12"><a href="#cb64-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb64-13"><a href="#cb64-13" aria-hidden="true" tabindex="-1"></a>DENUE[<span class="st">'Clase'</span>] <span class="op">=</span> clases</span>
+<span id="cb64-14"><a href="#cb64-14" aria-hidden="true" tabindex="-1"></a>DENUE <span class="op">=</span> DENUE.drop([<span class="st">'actividad_nombre'</span>, </span>
+<span id="cb64-15"><a href="#cb64-15" aria-hidden="true" tabindex="-1"></a>                    <span class="st">'actividad_cve'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb64-16"><a href="#cb64-16" aria-hidden="true" tabindex="-1"></a>DENUE.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="52">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>geometry</th>
+      <th>Clase</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POINT (2803952.280 831440.241)</td>
+      <td>Tienda</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POINT (2805964.648 834595.217)</td>
+      <td>Tienda</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POINT (2799011.530 839362.925)</td>
+      <td>Tienda</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POINT (2799739.565 841534.399)</td>
+      <td>Tienda</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POINT (2803412.265 837674.031)</td>
+      <td>Tienda</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a>CLASE_DENUE <span class="op">=</span> gpd.sjoin(COLONIAS_CDMX.drop([<span class="st">'ENT'</span>,<span class="st">'NOMDT'</span>,<span class="st">'NOMUT'</span>,<span class="st">'DTTOLOC'</span>,<span class="st">'ID'</span>], axis <span class="op">=</span> <span class="dv">1</span>),</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>                        DENUE,</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a>                        how <span class="op">=</span> <span class="st">"inner"</span>, </span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>                        op <span class="op">=</span> <span class="st">'contains'</span>).drop([<span class="st">'geometry'</span>,<span class="st">'index_right'</span>], axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>CLASE_DENUE.head(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="53">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>CVEDT</th>
+      <th>CVE_COL</th>
+      <th>Clase</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>02-001</td>
+      <td>Restaurante</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>02-001</td>
+      <td>Restaurante</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="55">
+<div class="sourceCode cell-code" id="cb66"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a>DENUE_DMY <span class="op">=</span> pd.get_dummies(CLASE_DENUE, </span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a>                           columns<span class="op">=</span>[<span class="st">"Clase"</span>],</span>
+<span id="cb66-3"><a href="#cb66-3" aria-hidden="true" tabindex="-1"></a>                           prefix<span class="op">=</span>[<span class="st">"DM"</span>]).rename({<span class="st">'CVEDT'</span>: <span class="st">'MUN'</span>}, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb66-4"><a href="#cb66-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb66-5"><a href="#cb66-5" aria-hidden="true" tabindex="-1"></a>DENUE_DMY.head(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="54">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>MUN</th>
+      <th>CVE_COL</th>
+      <th>DM_Bares</th>
+      <th>DM_Restaurante</th>
+      <th>DM_Tienda</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>02-001</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>02-001</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>02-001</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>DENUE_COL <span class="op">=</span> pd.DataFrame(DENUE_DMY.groupby([<span class="st">'CVE_COL'</span>]).agg({<span class="st">'DM_Bares'</span>:<span class="st">'count'</span>,</span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>                                                             <span class="st">'DM_Restaurante'</span>: <span class="st">'count'</span>,</span>
+<span id="cb67-3"><a href="#cb67-3" aria-hidden="true" tabindex="-1"></a>                                                             <span class="st">'DM_Tienda'</span>: <span class="st">'count'</span>}).reset_index()).rename({<span class="st">'DM_Bares'</span>: <span class="st">'BAR'</span>,</span>
+<span id="cb67-4"><a href="#cb67-4" aria-hidden="true" tabindex="-1"></a>                                                                                                           <span class="st">'DM_Restaurante'</span>: <span class="st">'RESTAURANTE'</span>,</span>
+<span id="cb67-5"><a href="#cb67-5" aria-hidden="true" tabindex="-1"></a>                                                                                                           <span class="st">'DM_Tienda'</span>: <span class="st">'TIENDA'</span>},</span>
+<span id="cb67-6"><a href="#cb67-6" aria-hidden="true" tabindex="-1"></a>                                                                                                          axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb67-7"><a href="#cb67-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-8"><a href="#cb67-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb67-9"><a href="#cb67-9" aria-hidden="true" tabindex="-1"></a>DENUE_MUN <span class="op">=</span> pd.DataFrame(DENUE_DMY.groupby([<span class="st">'MUN'</span>]).agg({<span class="st">'DM_Bares'</span>:<span class="st">'count'</span>,</span>
+<span id="cb67-10"><a href="#cb67-10" aria-hidden="true" tabindex="-1"></a>                                                         <span class="st">'DM_Restaurante'</span>: <span class="st">'count'</span>,</span>
+<span id="cb67-11"><a href="#cb67-11" aria-hidden="true" tabindex="-1"></a>                                                         <span class="st">'DM_Tienda'</span>: <span class="st">'count'</span>}).reset_index()).rename({<span class="st">'DM_Bares'</span>: <span class="st">'BAR'</span>,</span>
+<span id="cb67-12"><a href="#cb67-12" aria-hidden="true" tabindex="-1"></a>                                                                                                       <span class="st">'DM_Restaurante'</span>: <span class="st">'RESTAURANTE'</span>,</span>
+<span id="cb67-13"><a href="#cb67-13" aria-hidden="true" tabindex="-1"></a>                                                                                                       <span class="st">'DM_Tienda'</span>: <span class="st">'TIENDA'</span>},</span>
+<span id="cb67-14"><a href="#cb67-14" aria-hidden="true" tabindex="-1"></a>                                                                                                      axis <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="57">
+<div class="sourceCode cell-code" id="cb68"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a>COLONIA_RESULTADOS <span class="op">=</span> COLONIA_RESULTADOS.merge(DENUE_COL, </span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a>                                              left_on <span class="op">=</span> <span class="st">'CVE_COL'</span>, </span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a>                                              right_on <span class="op">=</span> <span class="st">'CVE_COL'</span>,</span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a>                                              how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a>COLONIA_RESULTADOS.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="56">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>CVE_COL</th>
+      <th>DIS_COL</th>
+      <th>SOCIAL_COL</th>
+      <th>FISICO_COL</th>
+      <th>METRO</th>
+      <th>METROBUS</th>
+      <th>BAR</th>
+      <th>RESTAURANTE</th>
+      <th>TIENDA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>02-001</td>
+      <td>-1.121714</td>
+      <td>-0.899873</td>
+      <td>-1.004272</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.0</td>
+      <td>19.0</td>
+      <td>19.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>02-002</td>
+      <td>-0.533961</td>
+      <td>0.628847</td>
+      <td>-0.193206</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>28.0</td>
+      <td>28.0</td>
+      <td>28.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>02-003</td>
+      <td>-1.193403</td>
+      <td>-1.425013</td>
+      <td>-1.044140</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>17.0</td>
+      <td>17.0</td>
+      <td>17.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>02-005</td>
+      <td>-1.175400</td>
+      <td>-0.988030</td>
+      <td>-0.609931</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>44.0</td>
+      <td>44.0</td>
+      <td>44.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>02-006</td>
+      <td>-0.459954</td>
+      <td>1.012260</td>
+      <td>-0.483310</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>66.0</td>
+      <td>66.0</td>
+      <td>66.0</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a>ALCALDIA_RESULTADOS <span class="op">=</span> ALCALDIA_RESULTADOS.merge(DENUE_MUN,</span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a>                                                left_on <span class="op">=</span> <span class="st">'MUN'</span>,</span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a>                                                right_on <span class="op">=</span> <span class="st">'MUN'</span>,</span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a>                                                how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb69-5"><a href="#cb69-5" aria-hidden="true" tabindex="-1"></a>ALCALDIA_RESULTADOS.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="57">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>MUN</th>
+      <th>DIS_MUN</th>
+      <th>SOCIAL_MUN</th>
+      <th>FISICO_MUN</th>
+      <th>METRO</th>
+      <th>METROBUS</th>
+      <th>BAR</th>
+      <th>RESTAURANTE</th>
+      <th>TIENDA</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>-0.996294</td>
+      <td>-0.839195</td>
+      <td>-0.647192</td>
+      <td>10.0</td>
+      <td>8.0</td>
+      <td>4818</td>
+      <td>4818</td>
+      <td>4818</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>003</td>
+      <td>-0.069455</td>
+      <td>0.905507</td>
+      <td>0.744289</td>
+      <td>6.0</td>
+      <td>11.0</td>
+      <td>6182</td>
+      <td>6182</td>
+      <td>6182</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>004</td>
+      <td>-1.304359</td>
+      <td>-2.897155</td>
+      <td>-2.414544</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2189</td>
+      <td>2189</td>
+      <td>2189</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>005</td>
+      <td>2.040898</td>
+      <td>3.474421</td>
+      <td>3.265199</td>
+      <td>20.0</td>
+      <td>72.0</td>
+      <td>13156</td>
+      <td>13156</td>
+      <td>13156</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>006</td>
+      <td>-0.650310</td>
+      <td>-0.448365</td>
+      <td>-0.774346</td>
+      <td>10.0</td>
+      <td>17.0</td>
+      <td>4405</td>
+      <td>4405</td>
+      <td>4405</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="densidad-de-población" class="level2" data-number="7.4">
+<h2 data-number="7.4" class="anchored" data-anchor-id="densidad-de-población"><span class="header-section-number">7.4</span> <strong>Densidad de Población</strong></h2>
+<div class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>DEN_POB <span class="op">=</span> pd.DataFrame(INTERSECCION.groupby([<span class="st">'CVE_COL'</span>]).agg({<span class="st">'POBTOT'</span>:<span class="st">'sum'</span>}).reset_index())</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>DEN_POB <span class="op">=</span> COLONIAS_CDMX.merge(DEN_POB,</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>                              left_on <span class="op">=</span> <span class="st">'CVE_COL'</span>,</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>                              right_on <span class="op">=</span> <span class="st">'CVE_COL'</span>,</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a>                              how <span class="op">=</span> <span class="st">'left'</span>).drop([<span class="st">'ENT'</span>,<span class="st">'NOMDT'</span>,</span>
+<span id="cb70-8"><a href="#cb70-8" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">'NOMUT'</span>,<span class="st">'DTTOLOC'</span>,</span>
+<span id="cb70-9"><a href="#cb70-9" aria-hidden="true" tabindex="-1"></a>                                                  <span class="st">'ID'</span>], </span>
+<span id="cb70-10"><a href="#cb70-10" aria-hidden="true" tabindex="-1"></a>                                                 axis <span class="op">=</span> <span class="dv">1</span>).rename({<span class="st">'CVEDT'</span>: <span class="st">'MUN'</span>}, axis <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb70-11"><a href="#cb70-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb70-12"><a href="#cb70-12" aria-hidden="true" tabindex="-1"></a>DEN_POB[<span class="st">'DEN_POB'</span>] <span class="op">=</span> DEN_POB[<span class="st">'POBTOT'</span>]<span class="op">/</span>DEN_POB.geometry.area</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="60">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>DENSIDAD_COLONIA <span class="op">=</span> pd.DataFrame(DEN_POB.groupby([<span class="st">'CVE_COL'</span>]).agg({<span class="st">'DEN_POB'</span>:<span class="st">'sum'</span>}).reset_index())</span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>DENSIDAD_MUN <span class="op">=</span> pd.DataFrame(DEN_POB.groupby([<span class="st">'MUN'</span>]).agg({<span class="st">'DEN_POB'</span>:<span class="st">'sum'</span>}).reset_index())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="61">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>COLONIA_RESULTADOS <span class="op">=</span> COLONIA_RESULTADOS.merge(DENSIDAD_COLONIA, </span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>                                              left_on <span class="op">=</span> <span class="st">'CVE_COL'</span>, </span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>                                              right_on <span class="op">=</span> <span class="st">'CVE_COL'</span>,</span>
+<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>                                              how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>COLONIA_RESULTADOS.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="60">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>CVE_COL</th>
+      <th>DIS_COL</th>
+      <th>SOCIAL_COL</th>
+      <th>FISICO_COL</th>
+      <th>METRO</th>
+      <th>METROBUS</th>
+      <th>BAR</th>
+      <th>RESTAURANTE</th>
+      <th>TIENDA</th>
+      <th>DEN_POB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>02-001</td>
+      <td>-1.121714</td>
+      <td>-0.899873</td>
+      <td>-1.004272</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>19.0</td>
+      <td>19.0</td>
+      <td>19.0</td>
+      <td>0.018946</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>02-002</td>
+      <td>-0.533961</td>
+      <td>0.628847</td>
+      <td>-0.193206</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>28.0</td>
+      <td>28.0</td>
+      <td>28.0</td>
+      <td>0.023829</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>02-003</td>
+      <td>-1.193403</td>
+      <td>-1.425013</td>
+      <td>-1.044140</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>17.0</td>
+      <td>17.0</td>
+      <td>17.0</td>
+      <td>0.013540</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>02-005</td>
+      <td>-1.175400</td>
+      <td>-0.988030</td>
+      <td>-0.609931</td>
+      <td>1.0</td>
+      <td>NaN</td>
+      <td>44.0</td>
+      <td>44.0</td>
+      <td>44.0</td>
+      <td>0.009680</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>02-006</td>
+      <td>-0.459954</td>
+      <td>1.012260</td>
+      <td>-0.483310</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>66.0</td>
+      <td>66.0</td>
+      <td>66.0</td>
+      <td>0.015130</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="62">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a>ALCALDIA_RESULTADOS <span class="op">=</span> ALCALDIA_RESULTADOS.merge(DENSIDAD_MUN,</span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>                                                left_on <span class="op">=</span> <span class="st">'MUN'</span>,</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>                                                right_on <span class="op">=</span> <span class="st">'MUN'</span>,</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>                                                how <span class="op">=</span> <span class="st">'left'</span>)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a>ALCALDIA_RESULTADOS.head(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="61">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>MUN</th>
+      <th>DIS_MUN</th>
+      <th>SOCIAL_MUN</th>
+      <th>FISICO_MUN</th>
+      <th>METRO</th>
+      <th>METROBUS</th>
+      <th>BAR</th>
+      <th>RESTAURANTE</th>
+      <th>TIENDA</th>
+      <th>DEN_POB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>-0.996294</td>
+      <td>-0.839195</td>
+      <td>-0.647192</td>
+      <td>10.0</td>
+      <td>8.0</td>
+      <td>4818</td>
+      <td>4818</td>
+      <td>4818</td>
+      <td>2.188289</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>003</td>
+      <td>-0.069455</td>
+      <td>0.905507</td>
+      <td>0.744289</td>
+      <td>6.0</td>
+      <td>11.0</td>
+      <td>6182</td>
+      <td>6182</td>
+      <td>6182</td>
+      <td>2.669713</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>004</td>
+      <td>-1.304359</td>
+      <td>-2.897155</td>
+      <td>-2.414544</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2189</td>
+      <td>2189</td>
+      <td>2189</td>
+      <td>0.343442</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>005</td>
+      <td>2.040898</td>
+      <td>3.474421</td>
+      <td>3.265199</td>
+      <td>20.0</td>
+      <td>72.0</td>
+      <td>13156</td>
+      <td>13156</td>
+      <td>13156</td>
+      <td>4.554329</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>006</td>
+      <td>-0.650310</td>
+      <td>-0.448365</td>
+      <td>-0.774346</td>
+      <td>10.0</td>
+      <td>17.0</td>
+      <td>4405</td>
+      <td>4405</td>
+      <td>4405</td>
+      <td>1.139269</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="63">
+<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co">#### Se exportan los resultados </span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>COLONIA_RESULTADOS</span>
+<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>ALCALDIA_RESULTADOS</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="62">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>MUN</th>
+      <th>DIS_MUN</th>
+      <th>SOCIAL_MUN</th>
+      <th>FISICO_MUN</th>
+      <th>METRO</th>
+      <th>METROBUS</th>
+      <th>BAR</th>
+      <th>RESTAURANTE</th>
+      <th>TIENDA</th>
+      <th>DEN_POB</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>002</td>
+      <td>-0.996294</td>
+      <td>-0.839195</td>
+      <td>-0.647192</td>
+      <td>10.0</td>
+      <td>8.0</td>
+      <td>4818</td>
+      <td>4818</td>
+      <td>4818</td>
+      <td>2.188289</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>003</td>
+      <td>-0.069455</td>
+      <td>0.905507</td>
+      <td>0.744289</td>
+      <td>6.0</td>
+      <td>11.0</td>
+      <td>6182</td>
+      <td>6182</td>
+      <td>6182</td>
+      <td>2.669713</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>004</td>
+      <td>-1.304359</td>
+      <td>-2.897155</td>
+      <td>-2.414544</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2189</td>
+      <td>2189</td>
+      <td>2189</td>
+      <td>0.343442</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>005</td>
+      <td>2.040898</td>
+      <td>3.474421</td>
+      <td>3.265199</td>
+      <td>20.0</td>
+      <td>72.0</td>
+      <td>13156</td>
+      <td>13156</td>
+      <td>13156</td>
+      <td>4.554329</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>006</td>
+      <td>-0.650310</td>
+      <td>-0.448365</td>
+      <td>-0.774346</td>
+      <td>10.0</td>
+      <td>17.0</td>
+      <td>4405</td>
+      <td>4405</td>
+      <td>4405</td>
+      <td>1.139269</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>007</td>
+      <td>5.736332</td>
+      <td>5.704887</td>
+      <td>4.365424</td>
+      <td>21.0</td>
+      <td>21.0</td>
+      <td>21223</td>
+      <td>21223</td>
+      <td>21223</td>
+      <td>6.625382</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>008</td>
+      <td>-1.099762</td>
+      <td>-2.221917</td>
+      <td>-1.689137</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2197</td>
+      <td>2197</td>
+      <td>2197</td>
+      <td>0.824648</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>009</td>
+      <td>-1.163220</td>
+      <td>-3.380190</td>
+      <td>-2.896337</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>2033</td>
+      <td>2033</td>
+      <td>2033</td>
+      <td>0.030578</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>010</td>
+      <td>0.533438</td>
+      <td>0.970945</td>
+      <td>1.509073</td>
+      <td>2.0</td>
+      <td>6.0</td>
+      <td>6854</td>
+      <td>6854</td>
+      <td>6854</td>
+      <td>5.337547</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>011</td>
+      <td>-0.609511</td>
+      <td>-2.192476</td>
+      <td>-1.621580</td>
+      <td>5.0</td>
+      <td>NaN</td>
+      <td>4773</td>
+      <td>4773</td>
+      <td>4773</td>
+      <td>0.536468</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>012</td>
+      <td>0.688221</td>
+      <td>0.177062</td>
+      <td>0.829076</td>
+      <td>NaN</td>
+      <td>8.0</td>
+      <td>7239</td>
+      <td>7239</td>
+      <td>7239</td>
+      <td>2.178372</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>013</td>
+      <td>0.183677</td>
+      <td>-1.641095</td>
+      <td>-1.434769</td>
+      <td>NaN</td>
+      <td>4.0</td>
+      <td>5442</td>
+      <td>5442</td>
+      <td>5442</td>
+      <td>0.709527</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>014</td>
+      <td>-1.302296</td>
+      <td>-0.115571</td>
+      <td>0.024759</td>
+      <td>21.0</td>
+      <td>23.0</td>
+      <td>5449</td>
+      <td>5449</td>
+      <td>5449</td>
+      <td>1.091633</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>015</td>
+      <td>-0.151071</td>
+      <td>1.786959</td>
+      <td>2.497975</td>
+      <td>44.0</td>
+      <td>97.0</td>
+      <td>11005</td>
+      <td>11005</td>
+      <td>11005</td>
+      <td>1.298807</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>016</td>
+      <td>-1.227027</td>
+      <td>-0.369035</td>
+      <td>-1.343037</td>
+      <td>15.0</td>
+      <td>8.0</td>
+      <td>5347</td>
+      <td>5347</td>
+      <td>5347</td>
+      <td>1.574163</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>017</td>
+      <td>-0.609259</td>
+      <td>1.085217</td>
+      <td>-0.414850</td>
+      <td>30.0</td>
+      <td>28.0</td>
+      <td>7080</td>
+      <td>7080</td>
+      <td>7080</td>
+      <td>1.608631</td>
     </tr>
   </tbody>
 </table>
